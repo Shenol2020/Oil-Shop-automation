@@ -1,5 +1,6 @@
 import ProductGrid from "./Components/ProductGrid.jsx";
-import Navbar from "./Components/navbar.jsx";
+import Navbar from "./Components/Nav_bar.jsx";
+import Sidebar from "./Components/Sidebar.jsx";
 
 function App() {
   const handleSelectItem = (item) => {
@@ -9,6 +10,7 @@ function App() {
   return (
     <div>
       <Navbar />
+      <Sidebar />
       <ProductGrid />
     </div>
   );

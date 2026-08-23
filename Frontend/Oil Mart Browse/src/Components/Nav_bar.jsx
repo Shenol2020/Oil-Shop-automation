@@ -3,7 +3,8 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <a className="navbar-brand" href="#">
-          Disanayake Oil Center
+          {/*Disanayake Oil Center*/}
+          <img src="/favicon.svg" alt="Bootstrap" width="30" height="24"></img>
         </a>
         <button
           className="navbar-toggler"
@@ -25,35 +26,17 @@ function Navbar() {
             </li>
             
             <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
+              <button
+                className="nav-link"
                 href="#"
                 role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample" 
+                aria-controls="offcanvasExample"                
               >
-                Product Categories
-              </a>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Action
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Another action
-                  </a>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Something else here
-                  </a>
-                </li>
-              </ul>
+                Filters
+              </button>
+              
             </li>
             {/*<li className="nav-item">
               <a className="nav-link disabled" aria-disabled="true">
