@@ -1,3 +1,5 @@
+import {Link} from "react-router-dom";
+
 function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -20,9 +22,9 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="#">
+              <Link className="nav-link active" aria-current="page" to="/">
                 Home                
-              </a>
+              </Link>
             </li>
             
             <li className="nav-item dropdown">
@@ -51,15 +53,22 @@ function Navbar() {
               placeholder="Search"
               aria-label="Search"
             />
-            <button className="btn btn-outline-success" type="submit">
+            <button className="btn btn-outline-success me-2" type="submit">
               Search
             </button>
           </form>
-          <li className="nav-item">
-            <button className="btn btn-outline-success" type="submit">
-              log in
-            </button>
+          <ul className="navbar-nav">
+            <li className="nav-item me-2">
+              <Link className="btn btn-primary" type="button" to="/signup">
+                Sign up
+              </Link>
             </li>
+            <li className="nav-item">
+              <button className="btn btn-primary" type="button">
+                log in
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
