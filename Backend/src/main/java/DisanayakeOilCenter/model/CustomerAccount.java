@@ -4,20 +4,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "customer_account") // Must match your MySQL table name
+@Table(name = "customer_account")
 public class CustomerAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @JsonProperty("user_id")
+    @Column(nullable = false, unique = true)
     private Integer userId;
 
+    @JsonProperty("userName")
     @Column(nullable = false)
     private String userName;
 
+    @JsonProperty("email")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonProperty("userPassword")
     @Column(nullable = false)
     private String userPassword;
 
