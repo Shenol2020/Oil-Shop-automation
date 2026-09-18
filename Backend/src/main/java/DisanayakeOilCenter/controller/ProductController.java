@@ -3,10 +3,7 @@ package DisanayakeOilCenter.controller;
 import DisanayakeOilCenter.model.Product;
 import DisanayakeOilCenter.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,8 +15,40 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Product> getAllProducts() {
         return productRepository.findAll(); // Fetches all rows and converts to JSON
+    }
+
+    @PostMapping("/add")
+    public Product addProduct(@RequestBody Product product) {
+        return productRepository.save(product);
+    }
+    @PutMapping("/updateStock/{pID}")
+    public Product updateStock(@PathVariable Integer pID, @RequestBody Product updatedData) {
+        Product existingProduct = productRepository.findById(pID).orElse(null);
+        if (existingProduct != null) {
+            existingProduct.setCurrent_stock_quantity(updatedData.getCurrent_stock_quantity());
+            return productRepository.save(existingProduct);
+        }
+        return null;
+    }
+    @PutMapping("/updatePrice/{pID}")
+    public Product updatePrice(@PathVariable Integer pID, @RequestBody Product updatedData) {
+        Product existingProduct = productRepository.findById(pID).orElse(null);
+        if (existingProduct != null) {
+            existingProduct.setPrice(updatedData.getPrice());
+            return productRepository.save(existingProduct);
+        }
+        return null;
+    }
+
+    @DeleteMapping("/remove/{pID}")
+    public Product removeProduct(@PathVariable Integer pID) {
+        Product product = productRepository.findById(pID).orElse(null);
+        if (product != null) {
+            productRepository.delete(product);
+        }
+        return product;
     }
 }
