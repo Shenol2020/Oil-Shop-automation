@@ -1,0 +1,46 @@
+package DisanayakeOilCenter.controller;
+
+import DisanayakeOilCenter.dto.CreatePurchaseOrderRequest;
+import DisanayakeOilCenter.model.PurchaseOrder;
+import DisanayakeOilCenter.service.PurchaseOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/purchase-orders")
+@CrossOrigin(origins = "http://localhost:5173")
+public class PurchaseOrderController {
+
+    @Autowired
+    private PurchaseOrderService purchaseOrderService;
+
+    @PostMapping("/create")
+    public PurchaseOrder createPurchaseOrder(@RequestBody CreatePurchaseOrderRequest request) {
+        return purchaseOrderService.createPurchaseOrder(request);
+    }
+
+    @PutMapping("/complete/{orderId}")
+    public PurchaseOrder completePurchaseOrder(@PathVariable Long orderId) {
+        return purchaseOrderService.completePurchaseOrder(orderId);
+    }
+
+    @GetMapping("/all")
+    public List<PurchaseOrder> getAllPurchaseOrders() {
+        return purchaseOrderService.getAllPurchaseOrders();
+    }
+
+    @GetMapping("/{orderId}")
+    public PurchaseOrder getPurchaseOrderById(@PathVariable Long orderId) {
+        return purchaseOrderService.getPurchaseOrderById(orderId);
+    }
+
+    @GetMapping("/by-date")
+    public List<PurchaseOrder> getPurchaseOrdersByDate(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return purchaseOrderService.getPurchaseOrdersByDate(date);
+    }
+}
