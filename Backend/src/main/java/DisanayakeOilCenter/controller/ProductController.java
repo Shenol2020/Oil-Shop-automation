@@ -19,10 +19,23 @@ public class ProductController {
     public List<Product> getAllProducts() {
         return productRepository.findAll(); // Fetches all rows and converts to JSON
     }
+    @GetMapping("/getProduct/{pID}")
+    public Product getProductById(@PathVariable Integer pID) {
+        return productRepository.findById(pID).orElse(null);
+    }
 
     @PostMapping("/add")
     public Product addProduct(@RequestBody Product product) {
         return productRepository.save(product);
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam String query) {
+        return productRepository.findByp_nameContainingIgnoreCase(query);
+    }
+    @GetMapping("/category/{categoryID}")
+    public List<Product> getProductsByCategory(@PathVariable int categoryID) {
+        return productRepository.findByCategoryID(categoryID);
     }
     @PutMapping("/updateStock/{pID}")
     public Product updateStock(@PathVariable Integer pID, @RequestBody Product updatedData) {
