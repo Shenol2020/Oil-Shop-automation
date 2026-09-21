@@ -12,14 +12,14 @@ public class Employee {
     private String name;
     private String email;
 
-    private int annualLeaves = 14;
-    private int usedAnnualLeaves = 0;
-    private int sickLeaves = 8;
-    private int usedSickLeaves = 0;
-    private int casualLeaves = 8;
-    private int usedCasualLeaves = 0;
-    private int otherLeaves = 5;
-    private int usedOtherLeaves = 0;
+    private double annualLeaves = 14;
+    private double usedAnnualLeaves = 0;
+    private double sickLeaves = 8;
+    private double usedSickLeaves = 0;
+    private double casualLeaves = 8;
+    private double usedCasualLeaves = 0;
+    private double otherLeaves = 5;
+    private double usedOtherLeaves = 0;
 
 
     public Employee() {
@@ -34,28 +34,28 @@ public class Employee {
     public String getEmail(){
         return email;
     }
-    public int getAnnualLeaves() {
+    public double getAnnualLeaves() {
         return annualLeaves;
     }
-    public int getUsedAnnualLeaves() {
+    public double getUsedAnnualLeaves() {
         return usedAnnualLeaves;
     }
-    public int getSickLeaves() {
+    public double getSickLeaves() {
         return sickLeaves;
     }
-    public int getUsedSickLeaves() {
+    public double getUsedSickLeaves() {
         return usedSickLeaves;
     }
-    public int getCasualLeaves() {
+    public double getCasualLeaves() {
         return casualLeaves;
     }
-    public int getUsedCasualLeaves() {
+    public double getUsedCasualLeaves() {
         return usedCasualLeaves;
     }
-    public int getOtherLeaves() {
+    public double getOtherLeaves() {
         return otherLeaves;
     }
-    public int getUsedOtherLeaves() {
+    public double getUsedOtherLeaves() {
         return usedOtherLeaves;
     }
 
@@ -65,42 +65,43 @@ public class Employee {
     public void setEmail(String email){
         this.email = email;
     }
-    public void setAnnualLeaves(int annualLeaves) {
+    public void setAnnualLeaves(double annualLeaves) {
         this.annualLeaves = annualLeaves;
     }
-    public void setUsedAnnualLeaves(int usedAnnualLeaves) {
+    public void setUsedAnnualLeaves(double usedAnnualLeaves) {
         this.usedAnnualLeaves = usedAnnualLeaves;
     }
-    public void setSickLeaves(int sickLeaves) {
+    public void setSickLeaves(double sickLeaves) {
         this.sickLeaves = sickLeaves;
     }
-    public void setUsedSickLeaves(int usedSickLeaves) {
+    public void setUsedSickLeaves(double usedSickLeaves) {
         this.usedSickLeaves = usedSickLeaves;
     }
-    public void setCasualLeaves(int casualLeaves) {
+    public void setCasualLeaves(double casualLeaves) {
         this.casualLeaves = casualLeaves;
     }
-    public void setUsedCasualLeaves(int usedCasualLeaves) {
+    public void setUsedCasualLeaves(double usedCasualLeaves) {
         this.usedCasualLeaves = usedCasualLeaves;
     }
-    public void setOtherLeaves(int otherLeaves) {
+    public void setOtherLeaves(double otherLeaves) {
         this.otherLeaves = otherLeaves;
     }
-    public void setUsedOtherLeaves(int usedOtherLeaves) {
+    public void setUsedOtherLeaves(double usedOtherLeaves) {
         this.usedOtherLeaves = usedOtherLeaves;
     }
 
-    public int getRemainingAnnualLeaves() {
+    public double getRemainingAnnualLeaves() {
         return annualLeaves - usedAnnualLeaves;
     }
-    public int getRemainingSickLeaves() {
+    public double getRemainingSickLeaves() {
         return sickLeaves - usedSickLeaves;
     }
-    public int getRemainingCasualLeaves() {
+    public double getRemainingCasualLeaves() {
         return casualLeaves - usedCasualLeaves;
     }
-    public int getRemainingOtherLeaves() {
+    public double getRemainingOtherLeaves() {
         return otherLeaves - usedOtherLeaves;
     }
 
 }
+

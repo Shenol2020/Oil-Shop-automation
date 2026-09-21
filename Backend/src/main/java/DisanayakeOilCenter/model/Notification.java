@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "nortifications")
+@Table(name = "notifications")
+public class Notification {
 
-public class Nortifications {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,13 +16,15 @@ public class Nortifications {
     private Employee employee;
 
     private String message;
+
     private boolean isRead;
+
     private LocalDateTime createdAt;
 
-    public Nortifications() {
+    public Notification() {
     }
 
-    public Nortifications(Employee employee, String message) {
+    public Notification(Employee employee, String message) {
         this.employee = employee;
         this.message = message;
         this.isRead = false;
@@ -32,22 +34,24 @@ public class Nortifications {
     public Long getId() {
         return id;
     }
-    public Employee getEmployee(){
+
+    public Employee getEmployee() {
         return employee;
     }
-    public String getMessage(){
+
+    public String getMessage() {
         return message;
     }
 
-    public boolean isRead(){
+    public boolean isRead() {
         return isRead;
     }
 
-    public void setRead(boolean read){
+    public void setRead(boolean read) {
         isRead = read;
     }
 
-    public LocalDateTime getCreatedAt(){
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 }
