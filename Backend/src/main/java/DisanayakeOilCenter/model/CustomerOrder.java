@@ -1,8 +1,11 @@
 package DisanayakeOilCenter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "customer_order")
@@ -32,15 +35,17 @@ public class CustomerOrder {
 
     @JsonProperty("order_status")
     @Column(nullable = false)
-    private String orderStatus; // e.g., "Pending", "Completed", "Cancelled"
+    private String orderStatus; 
 
-    /*@JsonProperty("order_method")
-    @Column(nullable = false)
-    private String orderMethod; // "Online" or "In-Store"*/
-
+    @OneToOne(mappedBy = "customerOrder", cascade = CascadeType.ALL)
     @JsonProperty("payment")
     @Column(nullable = false)
-    private String payment; // "Cash", "Card", "Online Gateway"
+    private String payment;
+
+    // Connects the order to the associative entity (CustomerOrderItem)
+    @OneToMany(mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("customerOrder") // Prevents infinite recursion when sending JSON to React
+    private List<CustomerOrderItem> orderItems = new ArrayList<>();
 
     public Integer getOrderId() {
         return orderId;
