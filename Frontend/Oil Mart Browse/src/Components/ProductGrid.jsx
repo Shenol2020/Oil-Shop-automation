@@ -6,7 +6,7 @@ function ProductGrid() {
   const [products, setProducts] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:8081/api/products')
+    fetch('http://localhost:8081/api/products/all')
       .then(response => response.json())
       .then(data => {
         setProducts(data); // Save the database rows into React state
