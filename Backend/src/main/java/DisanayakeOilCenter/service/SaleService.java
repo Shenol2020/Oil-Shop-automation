@@ -1,7 +1,9 @@
 package DisanayakeOilCenter.service;
 
 import DisanayakeOilCenter.dto.CreateSaleRequest;
+import DisanayakeOilCenter.dto.InvoiceResponse;
 import DisanayakeOilCenter.dto.OrderItemRequest;
+import DisanayakeOilCenter.dto.SaleResponse;
 import DisanayakeOilCenter.model.*;
 import DisanayakeOilCenter.repository.InvoiceRepository;
 import DisanayakeOilCenter.repository.SaleRepository;
@@ -21,19 +23,22 @@ public class SaleService {
     private final InvoiceRepository invoiceRepository;
     private final SalesReportRepository salesReportRepository;
     private final ProductService productService;
+    private final ResponseMapper responseMapper;
 
     public SaleService(SaleRepository saleRepository,
                        InvoiceRepository invoiceRepository,
                        SalesReportRepository salesReportRepository,
-                       ProductService productService) {
+    ProductService productService,
+    ResponseMapper responseMapper) {
         this.saleRepository = saleRepository;
         this.invoiceRepository = invoiceRepository;
         this.salesReportRepository = salesReportRepository;
         this.productService = productService;
+        this.responseMapper = responseMapper;
     }
 
     @Transactional
-    public Sale createSale(CreateSaleRequest request) {
+    public SaleResponse createSale(CreateSaleRequest request) {
         Sale sale = new Sale();
         LocalDate saleDate = request.getSaleDate() != null ? request.getSaleDate() : LocalDate.now();
         sale.setSaleDate(saleDate);
@@ -84,45 +89,46 @@ public class SaleService {
         invoiceRepository.save(invoice);
 
         savedSale.setInvoice(invoice);
-        return savedSale;
+        return responseMapper.toSaleResponse(savedSale);
     }
 
-    public List<Sale> getAllSales() {
-        return saleRepository.findAll();
+    public List<SaleResponse> getAllSales() {
+        return responseMapper.toSaleResponses(saleRepository.findAll());
     }
 
-    public Sale getSaleById(Long id) {
-        return saleRepository.findById(id)
+    public SaleResponse getSaleById(Long id) {
+        Sale sale = saleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sale not found with ID: " + id));
+        return responseMapper.toSaleResponse(sale);
     }
 
-    public List<Sale> getSalesByDate(LocalDate date) {
-        return saleRepository.findBySaleDate(date);
+    public List<SaleResponse> getSalesByDate(LocalDate date) {
+        return responseMapper.toSaleResponses(saleRepository.findBySaleDate(date));
     }
 
-    public List<Sale> getSalesByDateRange(LocalDate startDate, LocalDate endDate) {
-        return saleRepository.findBySaleDateBetween(startDate, endDate);
+    public List<SaleResponse> getSalesByDateRange(LocalDate startDate, LocalDate endDate) {
+        return responseMapper.toSaleResponses(saleRepository.findBySaleDateBetween(startDate, endDate));
     }
 
-    public Invoice getInvoiceByNumber(String invoiceNumber) {
+    public InvoiceResponse getInvoiceByNumber(String invoiceNumber) {
         Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber);
         if (invoice == null) {
             throw new RuntimeException("Invoice not found: " + invoiceNumber);
         }
-        return invoice;
+        return responseMapper.toInvoiceResponse(invoice);
     }
 
-    public Invoice getInvoiceBySaleId(Long saleId) {
+    public InvoiceResponse getInvoiceBySaleId(Long saleId) {
         Invoice invoice = invoiceRepository.findBySale_SaleId(saleId);
         if (invoice == null) {
             throw new RuntimeException("Invoice not found for sale id: " + saleId);
         }
-        return invoice;
+        return responseMapper.toInvoiceResponse(invoice);
     }
 
     @Transactional
     public SalesReport generateReport(ReportType type, LocalDate startDate, LocalDate endDate) {
-        List<Sale> sales = getSalesByDateRange(startDate, endDate);
+        List<Sale> sales = saleRepository.findBySaleDateBetween(startDate, endDate);
         long count = sales.size();
         BigDecimal totalRevenue = sales.stream()
                 .map(Sale::getTotalAmount)

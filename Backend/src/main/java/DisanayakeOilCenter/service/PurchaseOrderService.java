@@ -2,6 +2,7 @@ package DisanayakeOilCenter.service;
 
 import DisanayakeOilCenter.dto.CreatePurchaseOrderRequest;
 import DisanayakeOilCenter.dto.OrderItemRequest;
+import DisanayakeOilCenter.dto.PurchaseOrderResponse;
 import DisanayakeOilCenter.model.Product;
 import DisanayakeOilCenter.model.PurchaseOrder;
 import DisanayakeOilCenter.model.PurchaseOrderItem;
@@ -21,17 +22,20 @@ public class PurchaseOrderService {
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final SupplierService supplierService;
     private final ProductService productService;
+    private final ResponseMapper responseMapper;
 
     public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository,
                                 SupplierService supplierService,
-                                ProductService productService) {
+                                ProductService productService,
+                                ResponseMapper responseMapper) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.supplierService = supplierService;
         this.productService = productService;
+        this.responseMapper = responseMapper;
     }
 
     @Transactional
-    public PurchaseOrder createPurchaseOrder(CreatePurchaseOrderRequest request) {
+    public PurchaseOrderResponse createPurchaseOrder(CreatePurchaseOrderRequest request) {
         Supplier supplier = supplierService.getSupplierById(request.getSupplierId());
 
         PurchaseOrder order = new PurchaseOrder();
@@ -70,11 +74,11 @@ public class PurchaseOrderService {
         order.setItems(items);
         order.setTotalAmount(totalAmount);
 
-        return purchaseOrderRepository.save(order);
+        return responseMapper.toPurchaseOrderResponse(purchaseOrderRepository.save(order));
     }
 
     @Transactional
-    public PurchaseOrder completePurchaseOrder(Long orderId) {
+    public PurchaseOrderResponse completePurchaseOrder(Long orderId) {
         PurchaseOrder order = getPurchaseOrderById(orderId);
         if (order.getStatus() == PurchaseOrderStatus.COMPLETED) {
             throw new RuntimeException("Purchase order is already completed");
@@ -86,11 +90,11 @@ public class PurchaseOrderService {
         }
 
         order.setStatus(PurchaseOrderStatus.COMPLETED);
-        return purchaseOrderRepository.save(order);
+        return responseMapper.toPurchaseOrderResponse(purchaseOrderRepository.save(order));
     }
 
-    public List<PurchaseOrder> getAllPurchaseOrders() {
-        return purchaseOrderRepository.findAll();
+    public List<PurchaseOrderResponse> getAllPurchaseOrders() {
+        return responseMapper.toPurchaseOrderResponses(purchaseOrderRepository.findAll());
     }
 
     public PurchaseOrder getPurchaseOrderById(Long id) {
@@ -98,7 +102,11 @@ public class PurchaseOrderService {
                 .orElseThrow(() -> new RuntimeException("Purchase order not found with ID: " + id));
     }
 
-    public List<PurchaseOrder> getPurchaseOrdersByDate(LocalDate date) {
-        return purchaseOrderRepository.findByOrderDate(date);
+    public PurchaseOrderResponse getPurchaseOrderResponseById(Long id) {
+        return responseMapper.toPurchaseOrderResponse(getPurchaseOrderById(id));
+    }
+
+    public List<PurchaseOrderResponse> getPurchaseOrdersByDate(LocalDate date) {
+        return responseMapper.toPurchaseOrderResponses(purchaseOrderRepository.findByOrderDate(date));
     }
 }

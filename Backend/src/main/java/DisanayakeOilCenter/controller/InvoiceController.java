@@ -1,6 +1,6 @@
 package DisanayakeOilCenter.controller;
 
-import DisanayakeOilCenter.model.Invoice;
+import DisanayakeOilCenter.dto.InvoiceResponse;
 import DisanayakeOilCenter.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ public class InvoiceController {
     private SaleService saleService;
 
     @GetMapping("/number/{invoiceNumber}")
-    public Invoice getInvoiceByNumber(@PathVariable String invoiceNumber) {
+    public InvoiceResponse getInvoiceByNumber(@PathVariable String invoiceNumber) {
         return saleService.getInvoiceByNumber(invoiceNumber);
     }
 
     @GetMapping("/sale/{saleId}")
-    public Invoice getInvoiceBySaleId(@PathVariable Long saleId) {
+    public InvoiceResponse getInvoiceBySaleId(@PathVariable Long saleId) {
         return saleService.getInvoiceBySaleId(saleId);
     }
 }
