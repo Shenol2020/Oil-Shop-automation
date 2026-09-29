@@ -11,6 +11,7 @@ import DisanayakeOilCenter.repository.NotificationRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import java.time.temporal.ChronoUnit;
 
@@ -181,6 +182,17 @@ public class LeaveService {
         leaveRequest.setLeaveStatus(LeaveStatus.PENDING);
 
         return leaveRequestRepository.save(leaveRequest);
+    }
+
+
+    // ==============================
+// ADMIN GET PENDING LEAVE REQUESTS
+// ==============================
+
+    public List<LeaveRequest> getPendingLeaves() {
+
+        return leaveRequestRepository
+                .findByLeaveStatus(LeaveStatus.PENDING);
     }
 
 

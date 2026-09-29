@@ -5,6 +5,11 @@ import DisanayakeOilCenter.service.LeaveService;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@CrossOrigin(origins = {
+        "http://localhost:5173"
+})
 @RestController
 @RequestMapping("/api/leaves")
 public class LeaveController {
@@ -25,6 +30,17 @@ public class LeaveController {
             @RequestBody LeaveRequest leaveRequest) {
 
         return leaveService.requestLeave(leaveRequest);
+    }
+
+
+    // ==========================================
+    // ADMIN GET PENDING LEAVE REQUESTS
+    // ==========================================
+
+    @GetMapping("/pending")
+    public List<LeaveRequest> getPendingLeaves() {
+
+        return leaveService.getPendingLeaves();
     }
 
 
@@ -59,4 +75,3 @@ public class LeaveController {
         );
     }
 }
-
