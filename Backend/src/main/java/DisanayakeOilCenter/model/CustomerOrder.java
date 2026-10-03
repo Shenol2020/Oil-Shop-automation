@@ -25,7 +25,7 @@ public class CustomerOrder {
     /*@Column(name = "employee_id", nullable = true)
     private Integer employeeId;*/
 
-    @JsonProperty("order_date")
+    @JsonProperty("oder_date")
     @Column(nullable = false)
     private LocalDateTime orderDate;
 
@@ -35,11 +35,11 @@ public class CustomerOrder {
 
     @JsonProperty("order_status")
     @Column(nullable = false)
-    private String orderStatus; 
+    private String orderStatus;
 
-    @OneToOne(mappedBy = "customerOrder", cascade = CascadeType.ALL)
+    //@OneToOne(mappedBy = "customerOrder", cascade = CascadeType.ALL)
     @JsonProperty("payment")
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private String payment;
 
     // Connects the order to the associative entity (CustomerOrderItem)
@@ -62,14 +62,6 @@ public class CustomerOrder {
     public void setCustomer(CustomerAccount customer) {
         this.customer = customer;
     }
-
-    /*public Integer getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
-    }*/
 
     public LocalDateTime getOrderDate() {
         return orderDate;
