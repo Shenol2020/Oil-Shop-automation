@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../Context/AuthContext.jsx';
 
 export default function Login() {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); 
-    
+    e.preventDefault();     
+   
     // Keys must match the @JsonProperty strings in Java model
     const loginData = { email: email, userPassword: password };
 
@@ -23,13 +27,15 @@ export default function Login() {
         // Parse the returned Java object into a JavaScript object
         const userData = await response.json(); 
         
-        alert("Login successful! Welcome back, " + userData.userName);
         
         // Save the user's ID to the browser to use during order placement
         localStorage.setItem("currentUserId", userData.userId);
         localStorage.setItem("currentUserName", userData.userName);
         
         // You can later add React Router here to redirect them to the product catalog
+        login(); // This changes the global state to true, updating the Navbar
+        alert("Login successful! Welcome back, " + userData.userName);
+        navigate('/');
         
       } else {
         alert("Invalid email or password. Please try again.");

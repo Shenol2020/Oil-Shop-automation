@@ -1,12 +1,16 @@
 import {Link} from "react-router-dom";
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../Context/AuthContext.jsx';
 
 function Navbar() {
+  const {isLoggedIn, logout} = useContext(AuthContext);
+
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
         <a className="navbar-brand" href="#">
           {/*Disanayake Oil Center*/}
-          <img src="/favicon.svg" alt="Bootstrap" width="30" height="24"></img>
+          <img src="/D_logo.png" alt="Bootstrap" width="30" height="24"></img>
         </a>
         <button
           className="navbar-toggler"
@@ -57,17 +61,32 @@ function Navbar() {
               Search
             </button>
           </form>
-          <ul className="navbar-nav">
-            <li className="nav-item me-2">
-              <Link className="btn btn-primary" type="button" to="/signup">
-                Sign up
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="btn btn-primary" type="button" to="/login">
-                log in
-              </Link>
-            </li>
+          {/* Conditional Auth Section */}
+          <ul className="navbar-nav align-items-center">
+            {isLoggedIn ? (
+              <li className="nav-item ms-2">
+                <button 
+                  className="btn btn-primary rounded-circle d-flex justify-content-center align-items-center shadow-sm" 
+                  style={{ width: '45px', height: '45px', fontSize: '20px', fontWeight: 'bold' }}
+                  title="Account"
+                >
+                  H
+                </button>
+              </li>
+            ) : (
+            <ul className="navbar-nav">
+              <li className="nav-item me-2">
+                <Link className="btn btn-primary" type="button" to="/signup">
+                  Sign up
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="btn btn-primary" type="button" to="/login">
+                  log in
+                </Link>
+              </li>
+            </ul>
+            )}
           </ul>
         </div>
       </div>
