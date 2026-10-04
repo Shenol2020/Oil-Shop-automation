@@ -67,7 +67,7 @@ function Navbar() {
               <li className="nav-item ms-2">
                 <button 
                   className="btn btn-primary rounded-circle d-flex justify-content-center align-items-center shadow-sm" 
-                  style={{ width: '45px', height: '45px', fontSize: '20px', fontWeight: 'bold' }}
+                  style={{ width: '40px', height: '40px', fontSize: '18px', fontWeight: 'bold' }}
                   title="Account"
                 >
                   H

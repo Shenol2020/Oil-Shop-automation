@@ -4,6 +4,7 @@ import Navbar from "./Components/Nav_bar.jsx";
 import Sidebar from "./Components/Sidebar.jsx";
 import Signup from "./Components/Signup.jsx";
 import Login from "./Components/Login.jsx";
+import ProductDetails from "./Components/ProductDetails.jsx";
 
 function App() {
   const handleSelectItem = (item) => {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<ProductGrid />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/product/:pID/:productSlug/:volume/" element={<ProductDetails />} />
       </Routes>
     </BrowserRouter>
   );
