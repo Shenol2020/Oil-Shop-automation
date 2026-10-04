@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "product") // Must match your MySQL table name
+@Table(name = "product") // Must match the MySQL table name
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
