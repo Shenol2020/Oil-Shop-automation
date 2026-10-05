@@ -94,4 +94,12 @@ public class CustomerOrder {
     public void setPayment(String payment) {
         this.payment = payment;
     }
+
+    public List<CustomerOrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<CustomerOrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 }

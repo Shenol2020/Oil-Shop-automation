@@ -16,7 +16,8 @@ public class Product {
     private String category;
     private String brand;
     private String supplier;
-    private String price;
+    private double price;
+    private Integer stock_quantity;
     private String p_description;
     private String pic;
 
@@ -48,6 +49,14 @@ public class Product {
         return p_description;
     }
 
+    public Integer getStock_quantity() {
+        return stock_quantity;
+    }
+
+    public void setStock_quantity(Integer stock_quantity) {
+        this.stock_quantity = stock_quantity;
+    }
+
     public void setP_description(String p_description) {
         this.p_description = p_description;
     }
@@ -65,10 +74,12 @@ public class Product {
     }
 
     public void setCategory(String category) {
+
         this.category = category;
     }
 
     public String getBrand() {
+
         return brand;
     }
 
@@ -81,15 +92,18 @@ public class Product {
     }
 
     public void setSupplier(String supplier) {
+
         this.supplier = supplier;
     }
 
-    public String getPrice() {
+    public double getPrice() {
+
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
+
         this.price = price;
     }
-    // Generate Getters and Setters here
+
 }
