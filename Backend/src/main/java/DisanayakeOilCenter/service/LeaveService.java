@@ -40,16 +40,16 @@ public class LeaveService {
 
         // Check employee
         if (leaveRequest.getEmployee() == null ||
-                leaveRequest.getEmployee().getId() == null) {
+                leaveRequest.getEmployee().getUserId() == null) {
 
             throw new RuntimeException("Employee ID is required.");
         }
         System.out.println(
                 "Employee ID received: "
-                        + leaveRequest.getEmployee().getId());
+                        + leaveRequest.getEmployee().getUserId());
 
         Employee employee = employeeRepository
-                .findById(leaveRequest.getEmployee().getId())
+                .findById(leaveRequest.getEmployee().getUserId())
                 .orElseThrow(() ->
                         new RuntimeException("Employee not found"));
 
@@ -145,7 +145,7 @@ public class LeaveService {
         // ==========================================
 
         long pendingDays = leaveRequestRepository
-                .findByEmployeeId(employee.getId())
+                .findByEmployeeUserId(employee.getUserId())
                 .stream()
                 .filter(request ->
                         request.getLeaveStatus() == LeaveStatus.PENDING)
@@ -342,4 +342,3 @@ public class LeaveService {
         return leaveRequest;
     }
 }
-

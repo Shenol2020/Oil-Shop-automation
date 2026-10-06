@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface NotificationRepository
         extends JpaRepository<Notification, Long>{
-    List<Notification> findByEmployeeId(Long employeeId);
+    List<Notification> findByEmployeeUserId(String userId);
 
 }
