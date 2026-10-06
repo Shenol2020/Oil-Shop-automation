@@ -1,7 +1,9 @@
 package DisanayakeOilCenter.model;
 
+import jakarta.persistence.Entity;
 import java.time.LocalDate;
 
+@Entity
 public class Management extends ShopStaff {
 
     public Management() {
@@ -13,6 +15,11 @@ public class Management extends ShopStaff {
                       String phoneNumber, LocalDate dateJoined,String qrCodeBase64) {
         super(userId, name, email, password, address, phoneNumber, dateJoined, qrCodeBase64);
         setAccessLevel("MANAGER");
+    }
+
+    public Management(String userId, String name, String email, String password, String address,
+                      String phoneNumber, LocalDate dateJoined) {
+        this(userId, name, email, password, address, phoneNumber, dateJoined, null);
     }
 
     @Override

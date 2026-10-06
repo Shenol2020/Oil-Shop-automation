@@ -146,4 +146,8 @@ public class SystemUser {
                 ", accessLevel='" + accessLevel + '\'' +
                 '}';
     }
+
+    public String getId() {
+        return userId;
+    }
 }
