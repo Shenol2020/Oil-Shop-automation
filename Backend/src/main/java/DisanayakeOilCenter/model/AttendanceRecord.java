@@ -1,26 +1,34 @@
 package DisanayakeOilCenter.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "attendance_records")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class AttendanceRecord {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false)
-    private UUID userId;
+    // Add this @Column annotation to specify the length
+    @Column(name = "user_id", length = 36)
+    private String userId;
 
-    @Column(nullable = false)
     private LocalDate workDate;
-
     private LocalDateTime arrivalTime;
     private LocalDateTime departureTime;
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public LocalDate getWorkDate() { return workDate; }
+    public void setWorkDate(LocalDate workDate) { this.workDate = workDate; }
+    public LocalDateTime getArrivalTime() { return arrivalTime; }
+    public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }
+    public LocalDateTime getDepartureTime() { return departureTime; }
+    public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }
 }

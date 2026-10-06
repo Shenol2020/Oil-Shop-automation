@@ -9,8 +9,8 @@ public class MainAdmin extends Management {
     }
 
     public MainAdmin(String userId, String name, String email, String password, String address,
-                     String phoneNumber, LocalDate dateJoined,String accessLevel) {
-        super(userId, name, email, password, address, phoneNumber, dateJoined);
+                     String phoneNumber, LocalDate dateJoined,String accessLevel,String qrCodeBase64) {
+        super(userId, name, email, password, address, phoneNumber, dateJoined, qrCodeBase64);
         setAccessLevel(accessLevel);
     }
 
