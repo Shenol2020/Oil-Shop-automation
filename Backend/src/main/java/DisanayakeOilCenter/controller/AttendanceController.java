@@ -2,7 +2,7 @@ package DisanayakeOilCenter.controller;
 
 import DisanayakeOilCenter.model.AttendanceRecord;
 import DisanayakeOilCenter.repository.AttendanceRepository;
-import DisanayakeOilCenter.repository.UserRepository;
+import DisanayakeOilCenter.repository.ShopStaffRepository;
 import DisanayakeOilCenter.service.SalaryService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/attendance")
@@ -18,25 +17,24 @@ import java.util.UUID;
 public class AttendanceController {
 
     private final AttendanceRepository attendanceRepository;
-    private final UserRepository userRepository;
+    private final ShopStaffRepository shopStaffRepository;
     private final SalaryService salaryService;
 
     public AttendanceController(AttendanceRepository attendanceRepository,
-                                UserRepository userRepository,
+                                ShopStaffRepository shopStaffRepository,
                                 SalaryService salaryService) {
         this.attendanceRepository = attendanceRepository;
-        this.userRepository = userRepository;
+        this.shopStaffRepository = shopStaffRepository;
         this.salaryService = salaryService;
     }
 
-    // Called every time a QR code is scanned. First scan of the day = arrival,
-    // second scan = departure.
     @PostMapping("/scan")
     public Map<String, Object> scan(@RequestBody Map<String, String> body) {
-        UUID userId = UUID.fromString(body.get("userId"));
+        // Read as String directly
+        String userId = body.get("userId");
 
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new RuntimeException("Unknown user QR code");
+        if (shopStaffRepository.findById(userId).isEmpty()) {
+            throw new RuntimeException("Unknown staff QR code");
         }
 
         LocalDate today = LocalDate.now();
@@ -75,7 +73,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/today/{userId}")
-    public AttendanceRecord getToday(@PathVariable UUID userId) {
+    public AttendanceRecord getToday(@PathVariable String userId) {
         return attendanceRepository.findByUserIdAndWorkDate(userId, LocalDate.now())
                 .orElseThrow(() -> new RuntimeException("No record today"));
     }

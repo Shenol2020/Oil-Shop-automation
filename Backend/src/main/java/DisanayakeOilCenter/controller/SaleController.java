@@ -1,7 +1,7 @@
 package DisanayakeOilCenter.controller;
 
 import DisanayakeOilCenter.dto.CreateSaleRequest;
-import DisanayakeOilCenter.model.Sale;
+import DisanayakeOilCenter.dto.SaleResponse;
 import DisanayakeOilCenter.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,28 +19,28 @@ public class SaleController {
     private SaleService saleService;
 
     @PostMapping("/create")
-    public Sale createSale(@RequestBody CreateSaleRequest request) {
+    public SaleResponse createSale(@RequestBody CreateSaleRequest request) {
         return saleService.createSale(request);
     }
 
     @GetMapping("/all")
-    public List<Sale> getAllSales() {
+    public List<SaleResponse> getAllSales() {
         return saleService.getAllSales();
     }
 
     @GetMapping("/{saleId}")
-    public Sale getSaleById(@PathVariable Long saleId) {
+    public SaleResponse getSaleById(@PathVariable Long saleId) {
         return saleService.getSaleById(saleId);
     }
 
     @GetMapping("/by-date")
-    public List<Sale> getSalesByDate(
+    public List<SaleResponse> getSalesByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return saleService.getSalesByDate(date);
     }
 
     @GetMapping("/by-range")
-    public List<Sale> getSalesByDateRange(
+    public List<SaleResponse> getSalesByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         return saleService.getSalesByDateRange(start, end);

@@ -1,6 +1,10 @@
 package DisanayakeOilCenter.model;
+import jakarta.persistence.*;
 
+@MappedSuperclass
 public class SystemUser {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
     private String name;
     private String email;

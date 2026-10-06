@@ -1,7 +1,7 @@
 package DisanayakeOilCenter.controller;
 
 import DisanayakeOilCenter.dto.CreatePurchaseOrderRequest;
-import DisanayakeOilCenter.model.PurchaseOrder;
+import DisanayakeOilCenter.dto.PurchaseOrderResponse;
 import DisanayakeOilCenter.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,27 +19,27 @@ public class PurchaseOrderController {
     private PurchaseOrderService purchaseOrderService;
 
     @PostMapping("/create")
-    public PurchaseOrder createPurchaseOrder(@RequestBody CreatePurchaseOrderRequest request) {
+    public PurchaseOrderResponse createPurchaseOrder(@RequestBody CreatePurchaseOrderRequest request) {
         return purchaseOrderService.createPurchaseOrder(request);
     }
 
     @PutMapping("/complete/{orderId}")
-    public PurchaseOrder completePurchaseOrder(@PathVariable Long orderId) {
+    public PurchaseOrderResponse completePurchaseOrder(@PathVariable Long orderId) {
         return purchaseOrderService.completePurchaseOrder(orderId);
     }
 
     @GetMapping("/all")
-    public List<PurchaseOrder> getAllPurchaseOrders() {
+    public List<PurchaseOrderResponse> getAllPurchaseOrders() {
         return purchaseOrderService.getAllPurchaseOrders();
     }
 
     @GetMapping("/{orderId}")
-    public PurchaseOrder getPurchaseOrderById(@PathVariable Long orderId) {
-        return purchaseOrderService.getPurchaseOrderById(orderId);
+    public PurchaseOrderResponse getPurchaseOrderById(@PathVariable Long orderId) {
+        return purchaseOrderService.getPurchaseOrderResponseById(orderId);
     }
 
     @GetMapping("/by-date")
-    public List<PurchaseOrder> getPurchaseOrdersByDate(
+    public List<PurchaseOrderResponse> getPurchaseOrdersByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return purchaseOrderService.getPurchaseOrdersByDate(date);
     }

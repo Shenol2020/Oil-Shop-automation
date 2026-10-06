@@ -1,6 +1,8 @@
 package DisanayakeOilCenter.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 
@@ -17,6 +19,7 @@ public class PurchaseOrderItem {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
     private int quantity;
