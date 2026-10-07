@@ -13,7 +13,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    private Employee employee;
+    private ShopStaff employee;
 
     private String message;
 
@@ -24,7 +24,7 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(Employee employee, String message) {
+    public Notification(ShopStaff employee, String message) {
         this.employee = employee;
         this.message = message;
         this.isRead = false;
@@ -35,7 +35,7 @@ public class Notification {
         return id;
     }
 
-    public Employee getEmployee() {
+    public ShopStaff getEmployee() {
         return employee;
     }
 
@@ -47,8 +47,8 @@ public class Notification {
         return isRead;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
     }
 
     public LocalDateTime getCreatedAt() {

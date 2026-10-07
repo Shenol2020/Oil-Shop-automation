@@ -1,10 +1,10 @@
 package DisanayakeOilCenter.service;
 
-import DisanayakeOilCenter.model.Employee;
 import DisanayakeOilCenter.model.LeaveRequest;
 import DisanayakeOilCenter.model.LeaveStatus;
 import DisanayakeOilCenter.model.LeaveType;
 import DisanayakeOilCenter.model.Notification;
+import DisanayakeOilCenter.model.ShopStaff;
 import DisanayakeOilCenter.repository.EmployeeRepository;
 import DisanayakeOilCenter.repository.LeaveRequestRepository;
 import DisanayakeOilCenter.repository.NotificationRepository;
@@ -48,7 +48,7 @@ public class LeaveService {
                 "Employee ID received: "
                         + leaveRequest.getEmployee().getUserId());
 
-        Employee employee = employeeRepository
+        ShopStaff employee = employeeRepository
                 .findById(leaveRequest.getEmployee().getUserId())
                 .orElseThrow(() ->
                         new RuntimeException("Employee not found"));
@@ -220,7 +220,7 @@ public class LeaveService {
             );
         }
 
-        Employee employee = leaveRequest.getEmployee();
+        ShopStaff employee = leaveRequest.getEmployee();
 
         // Calculate number of leave days
         long requestedDays = ChronoUnit.DAYS.between(

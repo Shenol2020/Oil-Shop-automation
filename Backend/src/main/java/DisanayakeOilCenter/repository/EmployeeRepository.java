@@ -1,8 +1,8 @@
 package DisanayakeOilCenter.repository;
 
-import DisanayakeOilCenter.model.Employee;
+import DisanayakeOilCenter.model.ShopStaff;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmployeeRepository
-        extends JpaRepository<Employee, String>{
+        extends JpaRepository<ShopStaff, String>{
 }
