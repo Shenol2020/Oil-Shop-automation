@@ -1,5 +1,8 @@
 package DisanayakeOilCenter.model;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.time.LocalDate;
 
 @Entity
@@ -11,8 +14,9 @@ public class LeaveRequest {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @JoinColumn(name = "employee_id" , referencedColumnName = "userId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ShopStaff employee;
 
     private LocalDate startDate;
     private LocalDate endDate;
@@ -32,7 +36,7 @@ public class LeaveRequest {
     public Long getId(){
         return id;
     }
-    public Employee getEmployee(){
+    public ShopStaff getEmployee(){
         return employee;
     }
     public LocalDate getStartDate(){
@@ -54,7 +58,7 @@ public class LeaveRequest {
         return adminComment;
     }
 
-    public void setEmployee(Employee employee){
+    public void setEmployee(ShopStaff employee){
         this.employee = employee;
     }
     public void setStartDate(LocalDate startDate){

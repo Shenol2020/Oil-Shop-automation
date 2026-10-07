@@ -1,9 +1,7 @@
 package DisanayakeOilCenter.model;
 
-import jakarta.persistence.Entity;
 import java.time.LocalDate;
 
-@Entity
 public class Employee extends ShopStaff {
 
     public Employee() {
