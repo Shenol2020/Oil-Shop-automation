@@ -19,34 +19,27 @@ function LeaveRequestForm() {
     // ==========================================
 
     const handleChange = (event) => {
-
         const { name, value } = event.target;
-
         setFormData({
             ...formData,
             [name]: value
         });
     };
 
-
     // ==========================================
     // SUBMIT FORM
     // ==========================================
 
     const handleSubmit = async (event) => {
-
         event.preventDefault();
 
         setMessage("");
         setError("");
 
         try {
-
             await submitLeaveRequest(formData);
 
-            setMessage(
-                "Leave request submitted successfully!"
-            );
+            setMessage("Leave request submitted successfully!");
 
             // Clear form
             setFormData({
@@ -58,46 +51,32 @@ function LeaveRequestForm() {
             });
 
         } catch (error) {
-
             console.error("Leave request error:", error);
-
             setError(error.message);
         }
     };
 
-
     return (
         <div className="form-card">
-
             <h2>Request Leave</h2>
 
-
             {/* SUCCESS MESSAGE */}
-
             {message && (
                 <p className="success-message">
                     {message}
                 </p>
             )}
 
-
             {/* ERROR MESSAGE */}
-
             {error && (
                 <p className="error-message">
                     {error}
                 </p>
             )}
 
-
             <form onSubmit={handleSubmit}>
-
                 {/* EMPLOYEE ID */}
-
-                <label>
-                    Employee ID
-                </label>
-
+                <label>Employee ID</label>
                 <input
                     type="number"
                     name="employeeId"
@@ -107,13 +86,8 @@ function LeaveRequestForm() {
                     required
                 />
 
-
                 {/* START DATE */}
-
-                <label>
-                    Start Date
-                </label>
-
+                <label>Start Date</label>
                 <input
                     type="date"
                     name="startDate"
@@ -122,13 +96,8 @@ function LeaveRequestForm() {
                     required
                 />
 
-
                 {/* END DATE */}
-
-                <label>
-                    End Date
-                </label>
-
+                <label>End Date</label>
                 <input
                     type="date"
                     name="endDate"
@@ -137,45 +106,22 @@ function LeaveRequestForm() {
                     required
                 />
 
-
                 {/* LEAVE TYPE */}
-
-                <label>
-                    Leave Type
-                </label>
-
+                <label>Leave Type</label>
                 <select
                     name="leaveType"
                     value={formData.leaveType}
                     onChange={handleChange}
                     required
                 >
-
-                    <option value="ANNUAL">
-                        Annual Leave
-                    </option>
-
-                    <option value="CASUAL">
-                        Casual Leave
-                    </option>
-
-                    <option value="SICK">
-                        Sick Leave
-                    </option>
-
-                    <option value="OTHER">
-                        Other Leave
-                    </option>
-
+                    <option value="ANNUAL">Annual Leave</option>
+                    <option value="CASUAL">Casual Leave</option>
+                    <option value="SICK">Sick Leave</option>
+                    <option value="OTHER">Other Leave</option>
                 </select>
 
-
                 {/* REASON */}
-
-                <label>
-                    Reason
-                </label>
-
+                <label>Reason</label>
                 <textarea
                     name="reason"
                     value={formData.reason}
@@ -185,15 +131,11 @@ function LeaveRequestForm() {
                     required
                 />
 
-
                 {/* SUBMIT BUTTON */}
-
                 <button type="submit">
                     Submit Request
                 </button>
-
             </form>
-
         </div>
     );
 }
