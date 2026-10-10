@@ -1,0 +1,18 @@
+# OS files
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Backend Build
+Backend/target/
+Backend/.mvn/wrapper/maven-wrapper.jar
+
+# Frontend
+**/node_modules/
+**/dist/
+**/.vite/
