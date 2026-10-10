@@ -1,0 +1,3 @@
+# Public Images Directory
+This directory stores product images uploaded from the POS frontend.
+Images are served publicly at `/images/<filename>`.
