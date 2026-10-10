@@ -7,6 +7,8 @@ import DisanayakeOilCenter.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -15,56 +17,79 @@ public class OrderService {
 
     @Autowired
     private CustomerOrderRepository orderRepository;
+
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
-    private CustomerAccountRepository customerRepository;
+    private OnlineCustomerRepository customerRepository;
 
     @Transactional
     public CustomerOrder placeOrder(OrderRequestDto request) {
+
+        if (request.getCartItems() == null || request.getCartItems().isEmpty()) {
+            throw new RuntimeException("Cart cannot be empty");
+        }
+
         CustomerOrder newOrder = new CustomerOrder();
         newOrder.setOrderDate(LocalDateTime.now());
         newOrder.setOrderStatus("Pending");
         newOrder.setPayment(request.getPaymentMethod());
 
-        // Link customer if they are logged in
         if (request.getUserId() != null) {
-            CustomerAccount customer = customerRepository.findById(Long.valueOf(request.getUserId())).orElse(null);;
+            OnlineCustomer customer = customerRepository
+                    .findById(String.valueOf(request.getUserId()))
+                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+
             newOrder.setCustomer(customer);
         }
 
-        double totalAmount = 0.0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
-        // Process each item from the React cart
         for (CartItemDto cartItem : request.getCartItems()) {
-            Product product = productRepository.findById(Long.valueOf(cartItem.getProductId()))
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            // Optional: Check if stock is sufficient here
-            if (product.getStock_quantity() < cartItem.getQuantity()) {
-                throw new RuntimeException("Not enough stock for: " + product.getP_name());
+            if (cartItem.getQuantity() <= 0) {
+                throw new RuntimeException("Quantity must be greater than zero");
             }
 
+            Product product = productRepository
+                    .findById(Integer.valueOf(cartItem.getProductId()))
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            if (product.getCurrent_stock_quantity() < cartItem.getQuantity()) {
+                throw new RuntimeException(
+                        "Not enough stock for: " + product.getP_name());
+            }
+
+            BigDecimal unitPrice = parseProductPrice(product);
+
             CustomerOrderItem orderItem = new CustomerOrderItem();
-            orderItem.setCustomerOrder(newOrder); // Link back to the parent order
+            orderItem.setCustomerOrder(newOrder);
             orderItem.setProduct(product);
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setUnitPriceAtOrder(product.getPrice()); // Lock in current price
+            orderItem.setUnitPriceAtOrder(unitPrice.doubleValue());
 
-            // Add to total
-            totalAmount += (product.getPrice() * cartItem.getQuantity());
+            BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            totalAmount = totalAmount.add(itemTotal);
 
-            // Deduct from inventory
-            product.setStock_quantity(product.getStock_quantity() - cartItem.getQuantity());
+            product.setCurrent_stock_quantity(
+                    product.getCurrent_stock_quantity() - cartItem.getQuantity());
+
             productRepository.save(product);
 
             newOrder.getOrderItems().add(orderItem);
         }
 
-        newOrder.setTotalAmount(totalAmount);
+        newOrder.setTotalAmount(totalAmount.doubleValue());
 
-        // Because we used CascadeType.ALL in CustomerOrder, saving the order
-        // will automatically save all the associated CustomerOrderItems to the database!
         return orderRepository.save(newOrder);
+    }
+
+    private BigDecimal parseProductPrice(Product product) {
+        try {
+            return new BigDecimal(product.getPrice());
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid product price for product: " + product.getP_name(), e);
+        }
     }
 }
