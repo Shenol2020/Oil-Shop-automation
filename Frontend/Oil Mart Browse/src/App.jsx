@@ -5,6 +5,7 @@ import Sidebar from "./Components/Sidebar.jsx";
 import Signup from "./Components/Signup.jsx";
 import Login from "./Components/Login.jsx";
 import ProductDetails from "./Components/ProductDetails.jsx";
+import Cart from "./Components/Cart.jsx";
 
 function App() {
   const handleSelectItem = (item) => {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/product/:pID/:productSlug/:volume/" element={<ProductDetails />} />
+        <Route path="/Cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
   );

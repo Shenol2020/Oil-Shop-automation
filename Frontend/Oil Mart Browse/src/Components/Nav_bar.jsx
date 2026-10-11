@@ -1,9 +1,12 @@
-import {Link} from "react-router-dom";
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../Context/AuthContext.jsx';
+import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../Context/AuthContext.jsx";
+import cartStaticIcon from "../assets/CartIcon.png";
+import cartGifIcon from "../assets/CartIcon_animated.gif";
 
 function Navbar() {
-  const {isLoggedIn, logout} = useContext(AuthContext);
+  const { isLoggedIn, logout } = useContext(AuthContext);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -27,22 +30,21 @@ function Navbar() {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link active" aria-current="page" to="/">
-                Home                
+                Home
               </Link>
             </li>
-            
+
             <li className="nav-item dropdown">
               <button
                 className="nav-link"
                 href="#"
                 role="button"
                 data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasExample" 
-                aria-controls="offcanvasExample"                
+                data-bs-target="#offcanvasExample"
+                aria-controls="offcanvasExample"
               >
                 Filters
               </button>
-              
             </li>
             {/*<li className="nav-item">
               <a className="nav-link disabled" aria-disabled="true">
@@ -64,28 +66,54 @@ function Navbar() {
           {/* Conditional Auth Section */}
           <ul className="navbar-nav align-items-center">
             {isLoggedIn ? (
-              <li className="nav-item ms-2">
-                <button 
-                  className="btn btn-primary rounded-circle d-flex justify-content-center align-items-center shadow-sm" 
-                  style={{ width: '40px', height: '40px', fontSize: '18px', fontWeight: 'bold' }}
-                  title="Account"
-                >
-                  H
-                </button>
-              </li>
+              <>
+                <li className="nav-item">
+                  <Link
+                    to="/Cart"
+                    className="btn btn-outline-secondary d-flex align-items-center gap-2"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <img
+                      src={isHovered ? cartGifIcon : cartStaticIcon}
+                      alt="Cart"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        objectFit: "contain",
+                      }}
+                    />
+                    <span>Cart</span>
+                  </Link>
+                </li>
+                <li className="nav-item ms-2">
+                  <button
+                    className="btn btn-primary rounded-circle d-flex justify-content-center align-items-center shadow-sm"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                    }}
+                    title="Account"
+                  >
+                    H
+                  </button>
+                </li>
+              </>
             ) : (
-            <ul className="navbar-nav">
-              <li className="nav-item me-2">
-                <Link className="btn btn-primary" type="button" to="/signup">
-                  Sign up
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="btn btn-primary" type="button" to="/login">
-                  log in
-                </Link>
-              </li>
-            </ul>
+              <ul className="navbar-nav">
+                <li className="nav-item me-2">
+                  <Link className="btn btn-primary" type="button" to="/signup">
+                    Sign up
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="btn btn-primary" type="button" to="/login">
+                    log in
+                  </Link>
+                </li>
+              </ul>
             )}
           </ul>
         </div>
