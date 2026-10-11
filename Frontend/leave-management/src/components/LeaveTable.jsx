@@ -1,21 +1,22 @@
-function LeaveTable() {
+import { useState, useEffect } from "react";
 
-    const requests = [
-        {
-            id: 1,
-            type: "Annual",
-            startDate: "2026-10-01",
-            endDate: "2026-10-03",
-            status: "PENDING"
-        },
-        {
-            id: 2,
-            type: "Sick",
-            startDate: "2026-09-10",
-            endDate: "2026-09-11",
-            status: "APPROVED"
-        }
-    ];
+function LeaveTable() {
+    const [requests, setRequests] = useState([]);
+    useEffect(() => {
+        fetch("http://localhost:8081/api/leaves/all")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Backend Data:", data);
+                setRequests(data); // Store the real data in our state
+            })
+            .catch((error) => console.error("Error fetching leaves:", error));
+    }, []);
+
 
     return (
         <div className="table-card">
@@ -40,7 +41,7 @@ function LeaveTable() {
                     <tr key={request.id}>
 
                         <td>
-                            {request.type}
+                            {request.leaveType}
                         </td>
 
                         <td>
@@ -52,13 +53,12 @@ function LeaveTable() {
                         </td>
 
                         <td>
-                                <span
-                                    className={`status ${request.status.toLowerCase()}`}
-                                >
-                                    {request.status}
-                                </span>
+                            <span
+                                className={`status ${request.leaveStatus?.toLowerCase() || ""}`}
+                            >
+                                {request.leaveStatus || "UNKNOWN"}
+                            </span>
                         </td>
-
                     </tr>
 
                 ))}

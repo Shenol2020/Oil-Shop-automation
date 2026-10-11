@@ -74,4 +74,12 @@ public class LeaveController {
                 adminComment
         );
     }
+
+    // ==========================================
+    // ADMIN GET ALL LEAVE REQUESTS
+    // ==========================================
+    @GetMapping("/all")
+    public List<LeaveRequest> getAllLeaves() {
+        return leaveService.getAllLeaves();
+    }
 }

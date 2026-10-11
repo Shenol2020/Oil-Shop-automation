@@ -349,4 +349,11 @@ public class LeaveService {
 
         return leaveRequest;
     }
+
+    // ==========================================
+    // ADMIN: GET ALL REQUESTS
+    // ==========================================
+    public List<LeaveRequest> getAllLeaves() {
+        return leaveRequestRepository.findAll();
+    }
 }
