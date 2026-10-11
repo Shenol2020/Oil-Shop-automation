@@ -1,149 +1,203 @@
+
 package DisanayakeOilCenter.service;
 
+import DisanayakeOilCenter.model.LeaveBalance;
 import DisanayakeOilCenter.model.LeaveRequest;
 import DisanayakeOilCenter.model.LeaveStatus;
 import DisanayakeOilCenter.model.LeaveType;
 import DisanayakeOilCenter.model.Notification;
 import DisanayakeOilCenter.model.ShopStaff;
+
 import DisanayakeOilCenter.repository.EmployeeRepository;
+import DisanayakeOilCenter.repository.LeaveBalanceRepository;
 import DisanayakeOilCenter.repository.LeaveRequestRepository;
 import DisanayakeOilCenter.repository.NotificationRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 public class LeaveService {
 
     private final EmployeeRepository employeeRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
     private final LeaveRequestRepository leaveRequestRepository;
     private final NotificationRepository notificationRepository;
 
     public LeaveService(
             EmployeeRepository employeeRepository,
+            LeaveBalanceRepository leaveBalanceRepository,
             LeaveRequestRepository leaveRequestRepository,
             NotificationRepository notificationRepository) {
 
         this.employeeRepository = employeeRepository;
+        this.leaveBalanceRepository = leaveBalanceRepository;
         this.leaveRequestRepository = leaveRequestRepository;
         this.notificationRepository = notificationRepository;
     }
 
-    // ==============================
-    // EMPLOYEE REQUEST LEAVE
-    // ==============================
+    // ==========================================
+    // HELPER: FIND STAFF LEAVE BALANCE
+    // ==========================================
 
+
+    private LeaveBalance getLeaveBalance(ShopStaff employee) {
+
+        return leaveBalanceRepository.findByShopStaff(employee)
+                .orElseGet(() -> {
+                    LeaveBalance balance = new LeaveBalance();
+                    balance.setShopStaff(employee);
+
+                    return leaveBalanceRepository.save(balance);
+                });
+    }
+
+
+    // ==========================================
+    // HELPER: GET TOTAL LEAVE ALLOWANCE
+    // ==========================================
+
+    private double getTotalLeaves(
+            LeaveBalance balance,
+            LeaveType leaveType) {
+
+        switch (leaveType) {
+            case ANNUAL:
+                return balance.getAnnualLeaves();
+
+            case SICK:
+                return balance.getSickLeaves();
+
+            case CASUAL:
+                return balance.getCasualLeaves();
+
+            case OTHER:
+                return balance.getOtherLeaves();
+
+            default:
+                throw new RuntimeException("Invalid leave type.");
+        }
+    }
+
+    // ==========================================
+    // HELPER: GET USED LEAVES
+    // ==========================================
+
+    private double getUsedLeaves(
+            LeaveBalance balance,
+            LeaveType leaveType) {
+
+        switch (leaveType) {
+            case ANNUAL:
+                return balance.getUsedAnnualLeaves();
+
+            case SICK:
+                return balance.getUsedSickLeaves();
+
+            case CASUAL:
+                return balance.getUsedCasualLeaves();
+
+            case OTHER:
+                return balance.getUsedOtherLeaves();
+
+            default:
+                throw new RuntimeException("Invalid leave type.");
+        }
+    }
+
+    // ==========================================
+    // HELPER: UPDATE USED LEAVES
+    // ==========================================
+
+    private void addUsedLeaves(
+            LeaveBalance balance,
+            LeaveType leaveType,
+            long days) {
+
+        switch (leaveType) {
+            case ANNUAL:
+                balance.setUsedAnnualLeaves(
+                        balance.getUsedAnnualLeaves() + days);
+                break;
+
+            case SICK:
+                balance.setUsedSickLeaves(
+                        balance.getUsedSickLeaves() + days);
+                break;
+
+            case CASUAL:
+                balance.setUsedCasualLeaves(
+                        balance.getUsedCasualLeaves() + days);
+                break;
+
+            case OTHER:
+                balance.setUsedOtherLeaves(
+                        balance.getUsedOtherLeaves() + days);
+                break;
+
+            default:
+                throw new RuntimeException("Invalid leave type.");
+        }
+    }
+
+    // ==========================================
+    // EMPLOYEE: REQUEST LEAVE
+    // ==========================================
+
+    @Transactional
     public LeaveRequest requestLeave(LeaveRequest leaveRequest) {
 
         // Check employee
-        if (leaveRequest.getEmployee() == null ||
-                leaveRequest.getEmployee().getUserId() == null) {
+        if (leaveRequest.getEmployee() == null
+                || leaveRequest.getEmployee().getUserId() == null) {
 
             throw new RuntimeException("Employee ID is required.");
         }
-        System.out.println(
-                "Employee ID received: "
-                        + leaveRequest.getEmployee().getUserId());
 
         ShopStaff employee = employeeRepository
                 .findById(leaveRequest.getEmployee().getUserId())
                 .orElseThrow(() ->
-                        new RuntimeException("Employee not found"));
+                        new RuntimeException("Employee not found."));
 
         // Check dates
-        if (leaveRequest.getStartDate() == null ||
-                leaveRequest.getEndDate() == null) {
+        if (leaveRequest.getStartDate() == null
+                || leaveRequest.getEndDate() == null) {
 
             throw new RuntimeException(
-                    "Start date and end date are required."
-            );
+                    "Start date and end date are required.");
         }
 
-        // Check end date
         if (leaveRequest.getEndDate()
                 .isBefore(leaveRequest.getStartDate())) {
 
             throw new RuntimeException(
-                    "End date cannot be before start date."
-            );
+                    "End date cannot be before start date.");
         }
-
-        // Calculate requested days
-        long requestedDays = ChronoUnit.DAYS.between(
-                leaveRequest.getStartDate(),
-                leaveRequest.getEndDate()
-        ) + 1;
 
         // Check leave type
         LeaveType leaveType = leaveRequest.getLeaveType();
 
         if (leaveType == null) {
-            throw new RuntimeException(
-                    "Leave type is required."
-            );
+            throw new RuntimeException("Leave type is required.");
         }
 
-        // Get total leave limit
-        double totalLeaves;
+        // Calculate requested days, including both start and end dates
+        long requestedDays = ChronoUnit.DAYS.between(
+                leaveRequest.getStartDate(),
+                leaveRequest.getEndDate()
+        ) + 1;
 
-        switch (leaveType) {
+        // Get the separate LeaveBalance record
+        LeaveBalance balance = getLeaveBalance(employee);
 
-            case ANNUAL:
-                totalLeaves = employee.getAnnualLeaves();
-                break;
+        // Get allowance and already-used leaves
+        double totalLeaves = getTotalLeaves(balance, leaveType);
+        double usedLeaves = getUsedLeaves(balance, leaveType);
 
-            case SICK:
-                totalLeaves = employee.getSickLeaves();
-                break;
-
-            case CASUAL:
-                totalLeaves = employee.getCasualLeaves();
-                break;
-
-            case OTHER:
-                totalLeaves = employee.getOtherLeaves();
-                break;
-
-            default:
-                throw new RuntimeException(
-                        "Invalid leave type."
-                );
-        }
-
-        // Get already used/approved leaves
-        double usedLeaves;
-
-        switch (leaveType) {
-
-            case ANNUAL:
-                usedLeaves = employee.getUsedAnnualLeaves();
-                break;
-
-            case SICK:
-                usedLeaves = employee.getUsedSickLeaves();
-                break;
-
-            case CASUAL:
-                usedLeaves = employee.getUsedCasualLeaves();
-                break;
-
-            case OTHER:
-                usedLeaves = employee.getUsedOtherLeaves();
-                break;
-
-            default:
-                throw new RuntimeException(
-                        "Invalid leave type."
-                );
-        }
-
-        // ==========================================
-        // CHECK PENDING LEAVE REQUESTS
-        // ==========================================
-
+        // Count existing pending requests of the same type
         long pendingDays = leaveRequestRepository
                 .findByEmployeeUserId(employee.getUserId())
                 .stream()
@@ -155,39 +209,36 @@ public class LeaveService {
                         ChronoUnit.DAYS.between(
                                 request.getStartDate(),
                                 request.getEndDate()
-                        ) + 1
-                )
+                        ) + 1)
                 .sum();
 
-        // Calculate remaining leaves
+        // Calculate available leave
         double remainingLeaves =
                 totalLeaves - usedLeaves - pendingDays;
 
-        // Check whether enough leaves are available
+        // Prevent requests exceeding available leave
         if (requestedDays > remainingLeaves) {
 
             throw new RuntimeException(
-                    "Not enough " + leaveType +
-                            " leave. Remaining available: "
-                            + remainingLeaves +
-                            ", Requested: "
-                            + requestedDays
+                    "Not enough " + leaveType
+                            + " leave. Remaining available: "
+                            + remainingLeaves
+                            + ", Requested: " + requestedDays
             );
         }
 
-        // Set employee from database
+        // Assign the actual employee from the database
         leaveRequest.setEmployee(employee);
 
-        // New request starts as PENDING
+        // New requests are pending
         leaveRequest.setLeaveStatus(LeaveStatus.PENDING);
 
         return leaveRequestRepository.save(leaveRequest);
     }
 
-
-    // ==============================
-// ADMIN GET PENDING LEAVE REQUESTS
-// ==============================
+    // ==========================================
+    // ADMIN: GET PENDING REQUESTS
+    // ==========================================
 
     public List<LeaveRequest> getPendingLeaves() {
 
@@ -195,97 +246,64 @@ public class LeaveService {
                 .findByLeaveStatus(LeaveStatus.PENDING);
     }
 
-
-    // ==============================
-    // ADMIN APPROVE LEAVE
-    // ==============================
+    // ==========================================
+    // ADMIN: APPROVE LEAVE
+    // ==========================================
 
     @Transactional
     public LeaveRequest approveLeave(
             Long leaveId,
             String adminComment) {
 
-        LeaveRequest leaveRequest =
-                leaveRequestRepository.findById(leaveId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Leave request not found"));
+        LeaveRequest leaveRequest = leaveRequestRepository
+                .findById(leaveId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Leave request not found."));
 
         // Only pending requests can be approved
-        if (leaveRequest.getLeaveStatus()
-                != LeaveStatus.PENDING) {
-
+        if (leaveRequest.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new RuntimeException(
-                    "Only pending leave requests can be approved."
-            );
+                    "Only pending leave requests can be approved.");
         }
 
         ShopStaff employee = leaveRequest.getEmployee();
 
-        // Calculate number of leave days
+        LeaveType leaveType = leaveRequest.getLeaveType();
+
         long requestedDays = ChronoUnit.DAYS.between(
                 leaveRequest.getStartDate(),
                 leaveRequest.getEndDate()
         ) + 1;
 
-        // Update used leave count
-        switch (leaveRequest.getLeaveType()) {
+        // Get the separate leave balance
+        LeaveBalance balance = getLeaveBalance(employee);
 
-            case ANNUAL:
+        // Check balance again before approval
+        double totalLeaves = getTotalLeaves(balance, leaveType);
+        double usedLeaves = getUsedLeaves(balance, leaveType);
 
-                employee.setUsedAnnualLeaves(
-                        employee.getUsedAnnualLeaves()
-                                + (int) requestedDays
-                );
+        if (requestedDays > totalLeaves - usedLeaves) {
 
-                break;
-
-            case SICK:
-
-                employee.setUsedSickLeaves(
-                        employee.getUsedSickLeaves()
-                                + (int) requestedDays
-                );
-
-                break;
-
-            case CASUAL:
-
-                employee.setUsedCasualLeaves(
-                        employee.getUsedCasualLeaves()
-                                + (int) requestedDays
-                );
-
-                break;
-
-            case OTHER:
-
-                employee.setUsedOtherLeaves(
-                        employee.getUsedOtherLeaves()
-                                + (int) requestedDays
-                );
-
-                break;
-
-            default:
-                throw new RuntimeException(
-                        "Invalid leave type."
-                );
+            throw new RuntimeException(
+                    "Insufficient leave balance to approve this request.");
         }
 
-        // Change status
-        leaveRequest.setLeaveStatus(LeaveStatus.APPROVED);
+        // Update used leave in LeaveBalance, not ShopStaff
+        addUsedLeaves(balance, leaveType, requestedDays);
 
-        // Save admin comment
+        leaveBalanceRepository.save(balance);
+
+        // Update request status and admin comment
+        leaveRequest.setLeaveStatus(LeaveStatus.APPROVED);
         leaveRequest.setAdminComment(adminComment);
 
-        employeeRepository.save(employee);
         leaveRequestRepository.save(leaveRequest);
 
-        // Create notification
+        // Notify employee
         Notification notification = new Notification(
                 employee,
-                "Your " + leaveRequest.getLeaveType()
+                "Your " + leaveType
                         + " leave request has been APPROVED."
         );
 
@@ -294,43 +312,33 @@ public class LeaveService {
         return leaveRequest;
     }
 
-
-    // ==============================
-    // ADMIN REJECT LEAVE
-    // ==============================
+    // ==========================================
+    // ADMIN: REJECT LEAVE
+    // ==========================================
 
     @Transactional
     public LeaveRequest rejectLeave(
             Long leaveId,
             String adminComment) {
 
-        LeaveRequest leaveRequest =
-                leaveRequestRepository.findById(leaveId)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Leave request not found"));
+        LeaveRequest leaveRequest = leaveRequestRepository
+                .findById(leaveId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Leave request not found."));
 
         // Only pending requests can be rejected
-        if (leaveRequest.getLeaveStatus()
-                != LeaveStatus.PENDING) {
-
+        if (leaveRequest.getLeaveStatus() != LeaveStatus.PENDING) {
             throw new RuntimeException(
-                    "Only pending leave requests can be rejected."
-            );
+                    "Only pending leave requests can be rejected.");
         }
 
-        // Change status
         leaveRequest.setLeaveStatus(LeaveStatus.REJECTED);
-
-        // Save admin comment
         leaveRequest.setAdminComment(adminComment);
 
         leaveRequestRepository.save(leaveRequest);
 
-        // IMPORTANT:
-        // Do NOT increase used leaves when rejected.
-
-        // Create notification
+        // Rejected requests do not consume leave balance
         Notification notification = new Notification(
                 leaveRequest.getEmployee(),
                 "Your " + leaveRequest.getLeaveType()
