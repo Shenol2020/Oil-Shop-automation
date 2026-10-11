@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import {CartContext} from "../Context/CartContext.jsx";
 
 function ProductDetails() {
   // Extract the pID from the URL
@@ -8,6 +9,8 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     const fetchProductById = async () => {
@@ -33,6 +36,7 @@ function ProductDetails() {
   }, [pID]);
 
   const handleAddToCart = () => {
+    addToCart(product, quantity);
     console.log(`Added ${quantity} of ${product.p_name} to cart`);
     alert(`Successfully added ${quantity} item(s) to your cart!`);
   };
