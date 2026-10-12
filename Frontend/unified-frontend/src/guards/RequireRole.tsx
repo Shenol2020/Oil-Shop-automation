@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
-type AllowedRole = 'Customer' | 'ShopStaff' | 'MainAdmin';
+type AllowedRole = 'Customer' | 'ShopStaff' | 'MainAdmin' | 'Manager';
 
 interface RequireRoleProps {
   allowedRoles: AllowedRole[];

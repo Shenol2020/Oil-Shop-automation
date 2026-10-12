@@ -22,7 +22,7 @@ export interface EmployeeUser {
   userId: string;
   name: string;
   email: string;
-  role: 'ShopStaff' | 'MainAdmin';
+  role: 'ShopStaff' | 'MainAdmin' | 'Manager';
   accessLevel?: string;
   dateJoined?: string;
   qrCodeBase64?: string;

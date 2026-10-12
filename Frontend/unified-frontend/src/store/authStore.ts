@@ -3,7 +3,7 @@ import type { AuthUser } from '../types';
 
 interface AuthState {
   user: AuthUser | null;
-  role: 'Customer' | 'ShopStaff' | 'MainAdmin' | null;
+  role: 'Customer' | 'ShopStaff' | 'MainAdmin' | 'Manager' | null;
   token: string | null;
   setUser: (user: AuthUser | null, token?: string | null) => void;
   logout: () => void;

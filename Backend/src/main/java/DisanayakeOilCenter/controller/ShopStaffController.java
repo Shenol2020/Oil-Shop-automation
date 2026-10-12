@@ -6,6 +6,7 @@ import DisanayakeOilCenter.util.QrCodeGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,6 +18,11 @@ public class ShopStaffController {
 
     public ShopStaffController(ShopStaffRepository shopStaffRepository) {
         this.shopStaffRepository = shopStaffRepository;
+    }
+
+    @GetMapping
+    public List<ShopStaff> getAllStaff() {
+        return shopStaffRepository.findAll();
     }
 
     @PostMapping("/register")
