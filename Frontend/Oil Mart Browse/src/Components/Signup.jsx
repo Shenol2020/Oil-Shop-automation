@@ -1,9 +1,11 @@
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 export default function Signup() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
+    const navigate = useNavigate();
 
     const handleSignup = async (e) => {
     e.preventDefault(); 
@@ -20,12 +22,13 @@ export default function Signup() {
       });
 
       if (response.ok) {
-        alert("Account created successfully!");
         console.log("User data sent:", userData);
         // Optional: clear the form boxes here
         setName("");
         setEmail("");
         setPassword("");
+        alert("Account created successfully!");
+        navigate('/login'); // Redirect to login page after successful signup
       } else {
         alert("Failed to create account. Email might already exist.");
         console.error("Server Error:", response.statusText);

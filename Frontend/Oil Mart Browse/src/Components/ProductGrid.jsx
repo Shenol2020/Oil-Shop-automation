@@ -30,7 +30,9 @@ function ProductGrid() {
               name={product.p_name}
               type={product.category}
               price={product.price} 
-              img={product.pic}             
+              img={product.pic}  
+              pID={product.pID}
+              volume={product.volume}           
               onSelect={handleSelectProduct}
             />
           </div>

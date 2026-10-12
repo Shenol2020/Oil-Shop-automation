@@ -1,4 +1,10 @@
-function ProductCard({ name, type, price, onSelect, img }) {
+import {Link} from "react-router-dom";
+import { createSlug } from '../utils/CreateSlug.jsx';
+
+function ProductCard({ pID,name, type, price, volume, onSelect, img }) {
+  // Generate the slugified URL
+  const productUrl = `/product/${pID}/${createSlug(name)}/${volume}/`;
+
   return (
     <div className="card h-100 shadow-sm border-0">
       {img && <img src={img} className="card-img-top" alt={name} />}
@@ -13,12 +19,12 @@ function ProductCard({ name, type, price, onSelect, img }) {
         
         {/* Pushes the button to the bottom so all cards are equal height */}
         <div className="mt-auto">
-          <button 
+          <Link
             className="btn btn-primary w-100"
-            onClick={() => onSelect(name)}
+            onClick={() => onSelect(name)} to={productUrl}
           >
             View Details
-          </button>
+          </Link>
         </div>
       </div>
     </div>
