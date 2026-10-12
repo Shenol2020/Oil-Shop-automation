@@ -19,7 +19,7 @@ public class CustomerOrder {
     // Links to the customer (Nullable because POS walk-in customers don't have accounts)
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
-    private CustomerAccount customer;
+    private OnlineCustomer customer;
 
     // We will map this to the Employee entity later (Nullable because online orders don't have a cashier)
     /*@Column(name = "employee_id", nullable = true)
@@ -55,11 +55,11 @@ public class CustomerOrder {
         this.orderId = orderId;
     }
 
-    public CustomerAccount getCustomer() {
+    public OnlineCustomer getCustomer() {
         return customer;
     }
 
-    public void setCustomer(CustomerAccount customer) {
+    public void setCustomer(OnlineCustomer customer) {
         this.customer = customer;
     }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "product") // Must match the MySQL table name
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,13 +13,14 @@ public class Product {
     private Integer pID;
     private String p_name;
     private String volume;
-    private String category;
+    private int categoryID;
     private String brand;
-    private String supplier;
-    private double price;
-    private Integer stock_quantity;
+    private int supplierID;
+    private String price;
+    private int current_stock_quantity;
     private String p_description;
     private String pic;
+
 
     public String getPic() {
         return pic;
@@ -49,14 +50,6 @@ public class Product {
         return p_description;
     }
 
-    public Integer getStock_quantity() {
-        return stock_quantity;
-    }
-
-    public void setStock_quantity(Integer stock_quantity) {
-        this.stock_quantity = stock_quantity;
-    }
-
     public void setP_description(String p_description) {
         this.p_description = p_description;
     }
@@ -69,17 +62,15 @@ public class Product {
         this.volume = volume;
     }
 
-    public String getCategory() {
-        return category;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setCategory(String category) {
-
-        this.category = category;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 
     public String getBrand() {
-
         return brand;
     }
 
@@ -87,23 +78,19 @@ public class Product {
         this.brand = brand;
     }
 
-    public String getSupplier() {
-        return supplier;
-    }
+    public int getSupplierID() { return supplierID; }
 
-    public void setSupplier(String supplier) {
-
-        this.supplier = supplier;
-    }
-
-    public double getPrice() {
-
+    public void setSupplierID(int supplierID) { this.supplierID = supplierID; }
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
-
+    public void setPrice(String price) {
         this.price = price;
     }
 
+    public int getCurrent_stock_quantity() { return current_stock_quantity;}
+    public void setCurrent_stock_quantity(int current_stock_quantity) {
+        this.current_stock_quantity = current_stock_quantity;
+    }
 }

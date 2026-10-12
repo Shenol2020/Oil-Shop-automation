@@ -1,0 +1,527 @@
+### Product APIs
+
+---
+
+Description: Retrieve all products.
+Method: GET
+URL: `/api/products/all`
+JSON Example:
+Response:
+```json
+[
+  {
+    "pID": 1,
+    "p_name": "Engine Oil 10W-30",
+    "categoryID": 101,
+    "price": 25.50,
+    "current_stock_quantity": 150,
+    "supplierID": 10
+  },
+  {
+    "pID": 2,
+    "p_name": "Brake Fluid DOT4",
+    "categoryID": 102,
+    "price": 12.75,
+    "current_stock_quantity": 200,
+    "supplierID": 11
+  }
+]
+```
+
+---
+
+Description: Retrieve a product by its ID.
+Method: GET
+URL: `/api/products/getProduct/{pID}`
+JSON Example:
+Response:
+```json
+{
+  "pID": 1,
+  "p_name": "Engine Oil 10W-30",
+  "categoryID": 101,
+  "price": 25.50,
+  "current_stock_quantity": 150,
+  "supplierID": 10
+}
+```
+
+---
+
+Description: Add a new product.
+Method: POST
+URL: `/api/products/add`
+JSON Example:
+Request:
+```json
+{
+  "p_name": "New Product Name",
+  "categoryID": 103,
+  "price": 30.00,
+  "current_stock_quantity": 100,
+  "supplierID": 12
+}
+```
+Response:
+```json
+{
+  "pID": 3,
+  "p_name": "New Product Name",
+  "categoryID": 103,
+  "price": 30.00,
+  "current_stock_quantity": 100,
+  "supplierID": 12
+}
+```
+
+---
+
+Description: Search for products by name (case-insensitive).
+Method: GET
+URL: `/api/products/search?query={query}`
+JSON Example:
+Response:
+```json
+[
+  {
+    "pID": 1,
+    "p_name": "Engine Oil 10W-30",
+    "categoryID": 101,
+    "price": 25.50,
+    "current_stock_quantity": 150,
+    "supplierID": 10
+  }
+]
+```
+
+---
+
+Description: Retrieve products by category ID.
+Method: GET
+URL: `/api/products/category/{categoryID}`
+JSON Example:
+Response:
+```json
+[
+  {
+    "pID": 1,
+    "p_name": "Engine Oil 10W-30",
+    "categoryID": 101,
+    "price": 25.50,
+    "current_stock_quantity": 150,
+    "supplierID": 10
+  }
+]
+```
+
+---
+
+Description: Update the stock quantity of a product.
+Method: PUT
+URL: `/api/products/updateStock/{pID}`
+JSON Example:
+Request:
+```json
+{
+  "current_stock_quantity": 120
+}
+```
+Response:
+```json
+{
+  "pID": 1,
+  "p_name": "Engine Oil 10W-30",
+  "categoryID": 101,
+  "price": 25.50,
+  "current_stock_quantity": 120,
+  "supplierID": 10
+}
+```
+
+---
+
+Description: Update the price of a product.
+Method: PUT
+URL: `/api/products/updatePrice/{pID}`
+JSON Example:
+Request:
+```json
+{
+  "price": 28.75
+}
+```
+Response:
+```json
+{
+  "pID": 1,
+  "p_name": "Engine Oil 10W-30",
+  "categoryID": 101,
+  "price": 28.75,
+  "current_stock_quantity": 150,
+  "supplierID": 10
+}
+```
+
+---
+
+Description: Remove a product by its ID.
+Method: DELETE
+URL: `/api/products/remove/{pID}`
+JSON Example:
+Response:
+```json
+{
+  "pID": 1,
+  "p_name": "Engine Oil 10W-30",
+  "categoryID": 101,
+  "price": 25.50,
+  "current_stock_quantity": 150,
+  "supplierID": 10
+}
+```
+
+### Sales APIs
+
+---
+
+Description: Create a new sale.
+Method: POST
+URL: `/api/sales/create`
+JSON Example:
+Request:
+```json
+{
+  "customerID": 101,
+  "productSales": [
+    {
+      "productID": 1,
+      "quantity": 2,
+      "unitPrice": 25.50
+    },
+    {
+      "productID": 2,
+      "quantity": 1,
+      "unitPrice": 12.75
+    }
+  ],
+  "totalAmount": 63.75,
+  "paymentMethod": "Cash"
+}
+```
+Response:
+```json
+{
+  "saleId": 1001,
+  "customerID": 101,
+  "saleDate": "2026-09-28",
+  "productSales": [
+    {
+      "productID": 1,
+      "quantity": 2,
+      "unitPrice": 25.50
+    },
+    {
+      "productID": 2,
+      "quantity": 1,
+      "unitPrice": 12.75
+    }
+  ],
+  "totalAmount": 63.75,
+  "paymentMethod": "Cash"
+}
+```
+*Note: The actual `CreateSaleRequest` DTO structure would be needed for a precise request example. I've inferred a common structure for sales creation.*
+
+---
+
+Description: Retrieve all sales.
+Method: GET
+URL: `/api/sales/all`
+JSON Example:
+Response:
+```json
+[
+  {
+    "saleId": 1001,
+    "customerID": 101,
+    "saleDate": "2026-09-28",
+    "totalAmount": 63.75,
+    "paymentMethod": "Cash"
+  },
+  {
+    "saleId": 1002,
+    "customerID": 102,
+    "saleDate": "2026-09-27",
+    "totalAmount": 100.00,
+    "paymentMethod": "Card"
+  }
+]
+```
+
+---
+
+Description: Retrieve a sale by its ID.
+Method: GET
+URL: `/api/sales/{saleId}`
+JSON Example:
+Response:
+```json
+{
+  "saleId": 1001,
+  "customerID": 101,
+  "saleDate": "2026-09-28",
+  "totalAmount": 63.75,
+  "paymentMethod": "Cash"
+}
+```
+
+---
+
+Description: Retrieve sales by a specific date.
+Method: GET
+URL: `/api/sales/by-date?date={YYYY-MM-DD}`
+JSON Example:
+Response:
+```json
+[
+  {
+    "saleId": 1001,
+    "customerID": 101,
+    "saleDate": "2026-09-28",
+    "totalAmount": 63.75,
+    "paymentMethod": "Cash"
+  }
+]
+```
+
+---
+
+Description: Retrieve sales within a date range.
+Method: GET
+URL: `/api/sales/by-range?start={YYYY-MM-DD}&end={YYYY-MM-DD}`
+JSON Example:
+Response:
+```json
+[
+  {
+    "saleId": 1001,
+    "customerID": 101,
+    "saleDate": "2026-09-28",
+    "totalAmount": 63.75,
+    "paymentMethod": "Cash"
+  },
+  {
+    "saleId": 1002,
+    "customerID": 102,
+    "saleDate": "2026-09-27",
+    "totalAmount": 100.00,
+    "paymentMethod": "Card"
+  }
+]
+```
+
+### Supplier APIs
+
+---
+
+Description: Retrieve all suppliers.
+Method: GET
+URL: `/api/suppliers/all`
+JSON Example:
+Response:
+```json
+[
+  {
+    "supplierID": 1,
+    "company_name": "ABC Oil Inc.",
+    "contact_person": "John Doe",
+    "contact_number": "123-456-7890",
+    "email": "john.doe@abcoil.com",
+    "address": "123 Oil St, City"
+  },
+  {
+    "supplierID": 2,
+    "company_name": "XYZ Lubricants",
+    "contact_person": "Jane Smith",
+    "contact_number": "987-654-3210",
+    "email": "jane.smith@xyzlube.com",
+    "address": "456 Lube Ave, Town"
+  }
+]
+```
+
+---
+
+Description: Retrieve a supplier by ID.
+Method: GET
+URL: `/api/suppliers/{id}`
+JSON Example:
+Response:
+```json
+{
+  "supplierID": 1,
+  "company_name": "ABC Oil Inc.",
+  "contact_person": "John Doe",
+  "contact_number": "123-456-7890",
+  "email": "john.doe@abcoil.com",
+  "address": "123 Oil St, City"
+}
+```
+
+---
+
+Description: Add a new supplier.
+Method: POST
+URL: `/api/suppliers/add`
+JSON Example:
+Request:
+```json
+{
+  "company_name": "New Supplier Co.",
+  "contact_person": "Peter Jones",
+  "contact_number": "555-123-4567",
+  "email": "peter.jones@newsupplier.com",
+  "address": "789 Industrial Rd, Village"
+}
+```
+Response:
+```json
+{
+  "supplierID": 3,
+  "company_name": "New Supplier Co.",
+  "contact_person": "Peter Jones",
+  "contact_number": "555-123-4567",
+  "email": "peter.jones@newsupplier.com",
+  "address": "789 Industrial Rd, Village"
+}
+```
+
+---
+
+Description: Update an existing supplier by ID.
+Method: PUT
+URL: `/api/suppliers/update/{id}`
+JSON Example:
+Request:
+```json
+{
+  "company_name": "Updated Supplier Inc.",
+  "contact_person": "Peter J. Smith",
+  "contact_number": "555-987-6543",
+  "email": "pjsmith@updatedsupplier.com",
+  "address": "101 Commerce St, City"
+}
+```
+Response:
+```json
+{
+  "supplierID": 1,
+  "company_name": "Updated Supplier Inc.",
+  "contact_person": "Peter J. Smith",
+  "contact_number": "555-987-6543",
+  "email": "pjsmith@updatedsupplier.com",
+  "address": "101 Commerce St, City"
+}
+```
+
+---
+
+Description: Remove a supplier by ID.
+Method: DELETE
+URL: `/api/suppliers/remove/{id}`
+JSON Example:
+Response:
+```json
+{
+  "supplierID": 1,
+  "company_name": "ABC Oil Inc.",
+  "contact_person": "John Doe",
+  "contact_number": "123-456-7890",
+  "email": "john.doe@abcoil.com",
+  "address": "123 Oil St, City"
+}
+```
+
+### Report APIs
+
+---
+
+Description: Generate a daily sales report for a specific date.
+Method: POST
+URL: `/api/reports/daily?date={YYYY-MM-DD}`
+JSON Example:
+Response:
+```json
+{
+  "reportId": "DR-2026-09-28",
+  "reportType": "DAILY",
+  "startDate": "2026-09-28",
+  "endDate": "2026-09-28",
+  "totalSalesAmount": 1500.75,
+  "totalSalesCount": 15,
+  "itemsSold": [
+    {
+      "productID": 1,
+      "productName": "Engine Oil 10W-30",
+      "quantitySold": 5,
+      "totalRevenue": 127.50
+    }
+  ]
+}
+```
+*Note: The actual `SalesReport` and `ReportType` enum structures are not available in the provided code snippets. I've inferred a common structure for a sales report response.*
+
+---
+
+Description: Generate a monthly sales report for a specific year and month.
+Method: POST
+URL: `/api/reports/monthly?year={YYYY}&month={MM}`
+JSON Example:
+Response:
+```json
+{
+  "reportId": "MR-2026-09",
+  "reportType": "MONTHLY",
+  "startDate": "2026-09-01",
+  "endDate": "2026-09-30",
+  "totalSalesAmount": 45000.25,
+  "totalSalesCount": 500,
+  "itemsSold": [
+    {
+      "productID": 1,
+      "productName": "Engine Oil 10W-30",
+      "quantitySold": 150,
+      "totalRevenue": 3825.00
+    }
+  ]
+}
+```
+*Note: The actual `SalesReport` and `ReportType` enum structures are not available in the provided code snippets. I've inferred a common structure for a sales report response.*
+
+---
+
+Description: Retrieve all generated sales reports.
+Method: GET
+URL: `/api/reports/all`
+JSON Example:
+Response:
+```json
+[
+  {
+    "reportId": "DR-2026-09-28",
+    "reportType": "DAILY",
+    "startDate": "2026-09-28",
+    "endDate": "2026-09-28",
+    "totalSalesAmount": 1500.75,
+    "totalSalesCount": 15
+  },
+  {
+    "reportId": "MR-2026-09",
+    "reportType": "MONTHLY",
+    "startDate": "2026-09-01",
+    "endDate": "2026-09-30",
+    "totalSalesAmount": 45000.25,
+    "totalSalesCount": 500
+  }
+]
+```

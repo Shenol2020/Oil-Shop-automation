@@ -1,0 +1,616 @@
+
+### **Summary Table of REST API Endpoints**
+
+| Method   | Endpoint                          | Purpose                                      | Request Body         | Response                                                                 |
+| :------- | :-------------------------------- | :------------------------------------------- | :------------------- | :----------------------------------------------------------------------- |
+| `POST`   | `/api/attendance/scan`            | Records user arrival/departure               | `{"userId": "UUID"}` | `{"action": "string", "record": AttendanceRecord, "totalPay": number}`   |
+| `GET`    | `/api/attendance/today/{userId}`  | Retrieves today's attendance for a user      | None                 | `AttendanceRecord` or `null`/Error                                       |
+| `GET`    | `/api/customer_accounts`          | Lists all customer accounts                  | None                 | `List<CustomerAccount>`                                                  |
+| `POST`   | `/api/customer_accounts/signup`   | Creates a new customer account               | `CustomerAccount`    | `CustomerAccount`                                                        |
+| `GET`    | `/api/products/all`               | Lists all products                           | None                 | `List<Product>`                                                          |
+| `GET`    | `/api/products/getProduct/{pID}`  | Retrieves a product by ID                    | None                 | `Product` or `null`                                                      |
+| `POST`   | `/api/products/add`               | Adds a new product                           | `Product`            | `Product`                                                                |
+| `GET`    | `/api/products/search`            | Searches products by name                    | None                 | `List<Product>`                                                          |
+| `GET`    | `/api/products/category/{categoryID}` | Lists products by category                 | None                 | `List<Product>`                                                          |
+| `PUT`    | `/api/products/updateStock/{pID}` | Updates product stock quantity               | `{"current_stock_quantity": int}` | `Product` or `null`                                                      |
+| `PUT`    | `/api/products/updatePrice/{pID}` | Updates product price                        | `{"price": "string"}` | `Product` or `null`                                                      |
+| `DELETE` | `/api/products/remove/{pID}`      | Deletes a product by ID                      | None                 | `Product` or `null`                                                      |
+| `POST`   | `/api/users/register`             | Registers a new user and generates QR code   | `{"name": "string"}` | `User`                                                                   |
+| `GET`    | `/api/users/{id}`                 | Retrieves a user by ID                       | None                 | `User` or `null`/Error                                                   |
+
+---
+
+### **Detailed Endpoint Documentation**
+
+#### **Controller: `AttendanceController`**
+*   **Base Path:** `/api/attendance`
+*   **Database Entities:** `AttendanceRecord`, `User`
+
+##### **1. `POST /api/attendance/scan`**
+*   **HTTP Method:** `POST`
+*   **Full Path:** `/api/attendance/scan`
+*   **Purpose:** Records an employee's attendance (arrival or departure) based on a QR code scan. The first scan of the day is recorded as arrival, and the second as departure.
+*   **Authentication Requirements:** Assumed to be authenticated (e.g., via JWT token).
+*   **Path Parameters:** None
+*   **Query Parameters:** None
+*   **Request Body:**
+    *   **Exact JSON Structure:**
+        ```json
+        {
+            "userId": "string"
+        }
+        ```
+    *   **Realistic Sample:**
+        ```json
+        {
+            "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        }
+        ```
+    *   **Field Validation Rules:**
+        *   `userId`: Must be a valid UUID string.
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Successful recording of arrival or departure.
+    *   `400 Bad Request`: If `userId` is not a valid UUID format.
+    *   `500 Internal Server Error`: If `userId` is unknown or already checked out today.
+*   **Sample JSON Responses:**
+    *   **Arrival:**
+        ```json
+        {
+            "action": "ARRIVAL",
+            "record": {
+                "id": "abcde123-4567-8901-2345-67890abcdef0",
+                "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                "workDate": "2026-09-19",
+                "arrivalTime": "2026-09-19T14:35:00.123456789",
+                "departureTime": null,
+                "workHours": 0.0
+            },
+            "totalPay": 0.0
+        }
+        ```
+    *   **Departure:**
+        ```json
+        {
+            "action": "DEPARTURE",
+            "record": {
+                "id": "abcde123-4567-8901-2345-67890abcdef0",
+                "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                "workDate": "2026-09-19",
+                "arrivalTime": "2026-09-19T09:00:00.000000000",
+                "departureTime": "2026-09-19T17:00:00.000000000",
+                "workHours": 8.0
+            },
+            "totalPay": 120.50
+        }
+        ```
+
+##### **2. `GET /api/attendance/today/{userId}`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/attendance/today/{userId}`
+*   **Purpose:** Retrieves the attendance record for a specific user for the current day.
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:**
+    *   `userId` (UUID): The unique identifier of the user.
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the `AttendanceRecord` if found.
+    *   `500 Internal Server Error`: If no record is found for today.
+*   **Sample JSON Responses:**
+    *   **Found:**
+        ```json
+        {
+            "id": "abcde123-4567-8901-2345-67890abcdef0",
+            "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+            "workDate": "2026-09-19",
+            "arrivalTime": "2026-09-19T09:00:00.000000000",
+            "departureTime": "2026-09-19T17:00:00.000000000",
+            "workHours": 8.0
+        }
+        ```
+    *   **Not Found (Error Response):**
+        ```json
+        {
+            "timestamp": "...", "status": 500, "error": "Internal Server Error",
+            "message": "No record today", "path": "/api/attendance/today/..."
+        }
+        ```
+
+#### **Controller: `CustomerAccountController`**
+*   **Base Path:** `/api/customer_accounts`
+*   **Database Entity:** `CustomerAccount`
+
+##### **1. `GET /api/customer_accounts`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/customer_accounts`
+*   **Purpose:** Retrieves a list of all customer accounts.
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:** None
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns a list of `CustomerAccount` objects.
+*   **Sample JSON Responses:**
+    ```json
+    [
+        {
+            "user_id": 1,
+            "userName": "John Doe",
+            "email": "john.doe@example.com",
+            "userPassword": "hashedpassword1"
+        },
+        {
+            "user_id": 2,
+            "userName": "Jane Smith",
+            "email": "jane.smith@example.com",
+            "userPassword": "hashedpassword2"
+        }
+    ]
+    ```
+
+##### **2. `POST /api/customer_accounts/signup`**
+*   **HTTP Method:** `POST`
+*   **Full Path:** `/api/customer_accounts/signup`
+*   **Purpose:** Creates a new customer account.
+*   **Authentication Requirements:** None (registration endpoint).
+*   **Path Parameters:** None
+*   **Query Parameters:** None
+*   **Request Body:**
+    *   **Exact JSON Structure:**
+        ```json
+        {
+            "userName": "string",
+            "email": "string",
+            "userPassword": "string"
+        }
+        ```
+    *   **Realistic Sample:**
+        ```json
+        {
+            "userName": "New Customer",
+            "email": "new.customer@example.com",
+            "userPassword": "securepassword123"
+        }
+        ```
+    *   **Field Validation Rules:**
+        *   `userName`: Required.
+        *   `email`: Required, valid email format, must be unique.
+        *   `userPassword`: Required.
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the created `CustomerAccount` object.
+    *   `400 Bad Request`: If request body is malformed or validation fails.
+*   **Sample JSON Responses:**
+    ```json
+    {
+        "user_id": 3,
+        "userName": "New Customer",
+        "email": "new.customer@example.com",
+        "userPassword": "securepassword123"
+    }
+    ```
+
+#### **Controller: `ProductController`**
+*   **Base Path:** `/api/products`
+*   **Database Entity:** `Product`
+
+##### **1. `GET /api/products/all`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/products/all`
+*   **Purpose:** Retrieves a list of all products.
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:** None
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns a list of `Product` objects.
+*   **Sample JSON Responses:**
+    ```json
+    [
+        {
+            "pID": 1,
+            "p_name": "Engine Oil 5W-30",
+            "volume": "1L",
+            "categoryID": 101,
+            "brand": "Mobil",
+            "supplierID": 1,
+            "price": "45.99",
+            "current_stock_quantity": 150,
+            "p_description": "Synthetic engine oil for modern vehicles.",
+            "pic": "http://example.com/engine_oil.jpg"
+        }
+    ]
+    ```
+
+##### **2. `GET /api/products/getProduct/{pID}`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/products/getProduct/{pID}`
+*   **Purpose:** Retrieves a single product by its ID.
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:**
+    *   `pID` (Integer): The unique identifier of the product.
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the `Product` object if found, or `null` if not found.
+*   **Sample JSON Responses:**
+    *   **Found:**
+        ```json
+        {
+            "pID": 1,
+            "p_name": "Engine Oil 5W-30",
+            "volume": "1L",
+            "categoryID": 101,
+            "brand": "Mobil",
+            "supplierID": 1,
+            "price": "45.99",
+            "current_stock_quantity": 150,
+            "p_description": "Synthetic engine oil for modern vehicles.",
+            "pic": "http://example.com/engine_oil.jpg"
+        }
+        ```
+    *   **Not Found:**
+        ```json
+        null
+        ```
+
+##### **3. `POST /api/products/add`**
+*   **HTTP Method:** `POST`
+*   **Full Path:** `/api/products/add`
+*   **Purpose:** Adds a new product.
+*   **Authentication Requirements:** Assumed to be authenticated (e.g., admin role).
+*   **Path Parameters:** None
+*   **Query Parameters:** None
+*   **Request Body:**
+    *   **Exact JSON Structure:**
+        ```json
+        {
+            "p_name": "string",
+            "volume": "string",
+            "categoryID": "integer",
+            "brand": "string",
+            "supplierID": "integer",
+            "price": "string",
+            "current_stock_quantity": "integer",
+            "p_description": "string",
+            "pic": "string"
+        }
+        ```
+    *   **Realistic Sample:**
+        ```json
+        {
+            "p_name": "Gear Oil 75W-90",
+            "volume": "1L",
+            "categoryID": 103,
+            "brand": "Shell",
+            "supplierID": 3,
+            "price": "29.99",
+            "current_stock_quantity": 100,
+            "p_description": "Synthetic gear oil for transmissions.",
+            "pic": "http://example.com/gear_oil.jpg"
+        }
+        ```
+    *   **Field Validation Rules:**
+        *   `p_name`, `volume`, `categoryID`, `brand`, `supplierID`, `price`, `current_stock_quantity`: Required.
+        *   `categoryID`, `supplierID`, `current_stock_quantity`: Integers.
+        *   `price`: String, should be a valid decimal number.
+        *   `current_stock_quantity`: Must be non-negative.
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the newly created `Product` object.
+    *   `400 Bad Request`: If request body is malformed or validation fails.
+*   **Sample JSON Responses:**
+    ```json
+    {
+        "pID": 3,
+        "p_name": "Gear Oil 75W-90",
+        "volume": "1L",
+        "categoryID": 103,
+        "brand": "Shell",
+        "supplierID": 3,
+        "price": "29.99",
+        "current_stock_quantity": 100,
+        "p_description": "Synthetic gear oil for transmissions.",
+        "pic": "http://example.com/gear_oil.jpg"
+    }
+    ```
+
+##### **4. `GET /api/products/search`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/products/search`
+*   **Purpose:** Searches for products by name (case-insensitive).
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:** None
+*   **Query Parameters:**
+    *   `query` (String): The search term to match against product names.
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns a list of matching `Product` objects (empty list if no match).
+*   **Sample JSON Responses:**
+    *   **Matching:**
+        ```json
+        [
+            {
+                "pID": 1,
+                "p_name": "Engine Oil 5W-30",
+                "volume": "1L",
+                "categoryID": 101,
+                "brand": "Mobil",
+                "supplierID": 1,
+                "price": "45.99",
+                "current_stock_quantity": 150,
+                "p_description": "Synthetic engine oil for modern vehicles.",
+                "pic": "http://example.com/engine_oil.jpg"
+            }
+        ]
+        ```
+    *   **No Match:**
+        ```json
+        []
+        ```
+
+##### **5. `GET /api/products/category/{categoryID}`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/products/category/{categoryID}`
+*   **Purpose:** Retrieves a list of products belonging to a specific category.
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:**
+    *   `categoryID` (Integer): The ID of the product category.
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns a list of `Product` objects in the specified category (empty list if no products).
+*   **Sample JSON Responses:**
+    *   **Matching:**
+        ```json
+        [
+            {
+                "pID": 1,
+                "p_name": "Engine Oil 5W-30",
+                "volume": "1L",
+                "categoryID": 101,
+                "brand": "Mobil",
+                "supplierID": 1,
+                "price": "45.99",
+                "current_stock_quantity": 150,
+                "p_description": "Synthetic engine oil for modern vehicles.",
+                "pic": "http://example.com/engine_oil.jpg"
+            }
+        ]
+        ```
+    *   **No Match:**
+        ```json
+        []
+        ```
+
+##### **6. `PUT /api/products/updateStock/{pID}`**
+*   **HTTP Method:** `PUT`
+*   **Full Path:** `/api/products/updateStock/{pID}`
+*   **Purpose:** Updates the stock quantity of a specific product.
+*   **Authentication Requirements:** Assumed to be authenticated (e.g., staff/admin role).
+*   **Path Parameters:**
+    *   `pID` (Integer): The unique identifier of the product to update.
+*   **Query Parameters:** None
+*   **Request Body:**
+    *   **Exact JSON Structure:**
+        ```json
+        {
+            "current_stock_quantity": "integer"
+        }
+        ```
+    *   **Realistic Sample:**
+        ```json
+        {
+            "current_stock_quantity": 180
+        }
+        ```
+    *   **Field Validation Rules:**
+        *   `current_stock_quantity`: Required, integer, must be non-negative.
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the updated `Product` object or `null` if not found.
+*   **Sample JSON Responses:**
+    *   **Updated:**
+        ```json
+        {
+            "pID": 1,
+            "p_name": "Engine Oil 5W-30",
+            "volume": "1L",
+            "categoryID": 101,
+            "brand": "Mobil",
+            "supplierID": 1,
+            "price": "45.99",
+            "current_stock_quantity": 180,
+            "p_description": "Synthetic engine oil for modern vehicles.",
+            "pic": "http://example.com/engine_oil.jpg"
+        }
+        ```
+    *   **Not Found:**
+        ```json
+        null
+        ```
+
+##### **7. `PUT /api/products/updatePrice/{pID}`**
+*   **HTTP Method:** `PUT`
+*   **Full Path:** `/api/products/updatePrice/{pID}`
+*   **Purpose:** Updates the price of a specific product.
+*   **Authentication Requirements:** Assumed to be authenticated (e.g., staff/admin role).
+*   **Path Parameters:**
+    *   `pID` (Integer): The unique identifier of the product to update.
+*   **Query Parameters:** None
+*   **Request Body:**
+    *   **Exact JSON Structure:**
+        ```json
+        {
+            "price": "string"
+        }
+        ```
+    *   **Realistic Sample:**
+        ```json
+        {
+            "price": "47.50"
+        }
+        ```
+    *   **Field Validation Rules:**
+        *   `price`: Required, string, should be parseable as a positive decimal number.
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the updated `Product` object or `null` if not found.
+*   **Sample JSON Responses:**
+    *   **Updated:**
+        ```json
+        {
+            "pID": 1,
+            "p_name": "Engine Oil 5W-30",
+            "volume": "1L",
+            "categoryID": 101,
+            "brand": "Mobil",
+            "supplierID": 1,
+            "price": "47.50",
+            "current_stock_quantity": 150,
+            "p_description": "Synthetic engine oil for modern vehicles.",
+            "pic": "http://example.com/engine_oil.jpg"
+        }
+        ```
+    *   **Not Found:**
+        ```json
+        null
+        ```
+
+##### **8. `DELETE /api/products/remove/{pID}`**
+*   **HTTP Method:** `DELETE`
+*   **Full Path:** `/api/products/remove/{pID}`
+*   **Purpose:** Deletes a product by its ID.
+*   **Authentication Requirements:** Assumed to be authenticated (e.g., admin role).
+*   **Path Parameters:**
+    *   `pID` (Integer): The unique identifier of the product to delete.
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the deleted `Product` object or `null` if not found.
+*   **Sample JSON Responses:**
+    *   **Deleted:**
+        ```json
+        {
+            "pID": 1,
+            "p_name": "Engine Oil 5W-30",
+            "volume": "1L",
+            "categoryID": 101,
+            "brand": "Mobil",
+            "supplierID": 1,
+            "price": "45.99",
+            "current_stock_quantity": 150,
+            "p_description": "Synthetic engine oil for modern vehicles.",
+            "pic": "http://example.com/engine_oil.jpg"
+        }
+        ```
+    *   **Not Found:**
+        ```json
+        null
+        ```
+
+#### **Controller: `UserController`**
+*   **Base Path:** `/api/users`
+*   **Database Entity:** `User`
+
+##### **1. `POST /api/users/register`**
+*   **HTTP Method:** `POST`
+*   **Full Path:** `/api/users/register`
+*   **Purpose:** Registers a new user and generates a QR code for them.
+*   **Authentication Requirements:** None (registration endpoint).
+*   **Path Parameters:** None
+*   **Query Parameters:** None
+*   **Request Body:**
+    *   **Exact JSON Structure:**
+        ```json
+        {
+            "name": "string"
+        }
+        ```
+    *   **Realistic Sample:**
+        ```json
+        {
+            "name": "Alice Wonderland"
+        }
+        ```
+    *   **Field Validation Rules:**
+        *   `name`: Required, must not be blank.
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the newly registered `User` object with an assigned ID and generated QR code.
+    *   `400 Bad Request`: If `name` is missing or blank.
+*   **Sample JSON Responses:**
+    ```json
+    {
+        "id": "e6a7b8c9-d0e1-2f34-5678-90abcdef1234",
+        "name": "Alice Wonderland",
+        "qrCodeBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5OUp..."
+    }
+    ```
+
+##### **2. `GET /api/users/{id}`**
+*   **HTTP Method:** `GET`
+*   **Full Path:** `/api/users/{id}`
+*   **Purpose:** Retrieves a user by their unique ID.
+*   **Authentication Requirements:** Assumed to be authenticated.
+*   **Path Parameters:**
+    *   `id` (String): The UUID string of the user.
+*   **Query Parameters:** None
+*   **Request Body:** None
+*   **Expected Response Status Codes:**
+    *   `200 OK`: Returns the `User` object if found.
+    *   `400 Bad Request`: If `id` is not a valid UUID string.
+    *   `500 Internal Server Error`: If no user is found for the given ID.
+*   **Sample JSON Responses:**
+    *   **Found:**
+        ```json
+        {
+            "id": "e6a7b8c9-d0e1-2f34-5678-90abcdef1234",
+            "name": "Alice Wonderland",
+            "qrCodeBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5OUp..."
+        }
+        ```
+    *   **Not Found (Error Response):**
+        ```json
+        {
+            "timestamp": "...", "status": 500, "error": "Internal Server Error",
+            "message": "User not found", "path": "/api/users/..."
+        }
+        ```
+
+---
+
+### **Endpoint Grouping**
+
+#### **Endpoints Needing a Request Body:**
+*   `POST /api/attendance/scan`
+*   `POST /api/customer_accounts/signup`
+*   `POST /api/products/add`
+*   `PUT /api/products/updateStock/{pID}`
+*   `PUT /api/products/updatePrice/{pID}`
+*   `POST /api/users/register`
+
+#### **Endpoints Without a Request Body:**
+*   `GET /api/attendance/today/{userId}`
+*   `GET /api/customer_accounts`
+*   `GET /api/products/all`
+*   `GET /api/products/getProduct/{pID}`
+*   `GET /api/products/search`
+*   `GET /api/products/category/{categoryID}`
+*   `DELETE /api/products/remove/{pID}`
+*   `GET /api/users/{id}`
+
+#### **Endpoints Using Parameters (Path and/or Query):**
+*   `GET /api/attendance/today/{userId}` (Path Parameter: `userId`)
+*   `GET /api/products/getProduct/{pID}` (Path Parameter: `pID`)
+*   `GET /api/products/search` (Query Parameter: `query`)
+*   `GET /api/products/category/{categoryID}` (Path Parameter: `categoryID`)
+*   `PUT /api/products/updateStock/{pID}` (Path Parameter: `pID`)
+*   `PUT /api/products/updatePrice/{pID}` (Path Parameter: `pID`)
+*   `DELETE /api/products/remove/{pID}` (Path Parameter: `pID`)
+*   `GET /api/users/{id}` (Path Parameter: `id`)
+
+---
+
+### **Notes on Authentication and Validation**
+
+**Authentication:**
+The provided codebase does not explicitly include Spring Security annotations (like `@PreAuthorize`, `@Secured`, or configuration for JWT/OAuth2). However, for a real-world application, most endpoints (especially those involving data modification or retrieval of sensitive information) would require authentication. The current documentation assumes an authenticated context for most endpoints except for the user registration and customer account signup endpoints. Implementing robust authentication (e.g., using JWT tokens in headers) would be crucial for production.
+
+**Validation:**
+While some basic validation checks are present in the controllers (e.g., `userId` parsing to UUID, `name` not being blank), comprehensive input validation using Spring's `@Valid` annotation with JSR 303/349 (Bean Validation) annotations (like `@NotNull`, `@Size`, `@Email`, `@Min`, `@Max`) on DTOs and model classes is not explicitly visible in the controller code. The documentation assumes standard validation rules based on data types and common business requirements for the fields involved. For a production-grade application, server-side validation using these annotations would be highly recommended to ensure data integrity and prevent security vulnerabilities. The current error handling for validation issues primarily relies on `RuntimeException` or `IllegalArgumentException`, which would typically be caught by a `GlobalExceptionHandler` to return appropriate HTTP status codes (e.g., `400 Bad Request`).
