@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "shop_staff")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ShopStaff extends SystemUser {
     private LocalDate dateJoined;
 

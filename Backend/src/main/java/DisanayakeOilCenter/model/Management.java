@@ -1,6 +1,8 @@
 package DisanayakeOilCenter.model;
+import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDate;
 
+@MappedSuperclass
 public class Management extends ShopStaff {
 
     public Management() {

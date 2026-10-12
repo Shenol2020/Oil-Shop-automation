@@ -1,7 +1,11 @@
 package DisanayakeOilCenter.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "manager")
 public class Manager extends Management {
 
     public Manager() {

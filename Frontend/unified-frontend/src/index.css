@@ -502,4 +502,25 @@ button, input, select, textarea, optgroup {
   color: #FFFFFF !important;
 }
 
+/* Html5Qrcode Camera Scanner Styles */
+#qr-camera-element {
+  width: 100% !important;
+  border: none !important;
+  position: relative !important;
+}
+
+#qr-camera-element video {
+  width: 100% !important;
+  min-height: 420px !important;
+  max-height: 520px !important;
+  object-fit: cover !important;
+  border-radius: 12px !important;
+  display: block !important;
+}
+
+#qr-camera-element img[alt="Info icon"] {
+  display: none !important;
+}
+
+
 

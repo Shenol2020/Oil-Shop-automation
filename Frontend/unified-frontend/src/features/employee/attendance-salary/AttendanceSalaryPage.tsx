@@ -64,8 +64,16 @@ export const AttendanceSalaryPage: React.FC = () => {
       await html5QrCode.start(
         cameraId,
         {
-          fps: 10,
-          qrbox: { width: 220, height: 220 },
+          fps: 15,
+          qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+            // Generous square area (85% of min dimension, min 280px)
+            const boxSize = Math.max(Math.floor(minEdge * 0.85), 280);
+            return {
+              width: boxSize,
+              height: boxSize,
+            };
+          },
         },
         async (decodedText) => {
           await stopCamera();
@@ -171,16 +179,16 @@ export const AttendanceSalaryPage: React.FC = () => {
           <div
             style={{
               position: 'relative',
-              height: '260px',
+              minHeight: '420px',
               backgroundColor: '#0F172A',
-              borderRadius: '12px',
+              borderRadius: '14px',
               overflow: 'hidden',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <div id="qr-camera-element" style={{ width: '100%', height: '100%' }} />
+            <div id="qr-camera-element" style={{ width: '100%', minHeight: '420px' }} />
 
             {!isScanning && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', gap: '0.75rem' }}>
