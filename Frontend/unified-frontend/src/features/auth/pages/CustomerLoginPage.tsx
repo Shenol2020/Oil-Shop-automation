@@ -49,23 +49,26 @@ export const CustomerLoginPage: React.FC = () => {
 
   return (
     <div>
-      <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.25rem' }}>
-        Customer Sign In
-      </h2>
-      <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.5rem' }}>
-        Access your orders and account benefits.
-      </p>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#FFFFFF', margin: '0 0 0.25rem 0', letterSpacing: '-0.02em' }}>
+          Customer Sign In
+        </h2>
+        <p style={{ fontSize: '0.825rem', color: 'rgba(255, 255, 255, 0.72)', margin: 0 }}>
+          Access your orders and precision lubricant history.
+        </p>
+      </div>
 
       {error && (
         <div
           style={{
-            backgroundColor: '#FEF2F2',
-            border: '1px solid #FCA5A5',
-            color: '#B91C1C',
-            padding: '0.65rem',
-            borderRadius: '8px',
+            backgroundColor: 'rgba(239, 68, 68, 0.25)',
+            border: '1px solid rgba(248, 113, 113, 0.45)',
+            color: '#FEE2E2',
+            padding: '0.75rem 1rem',
+            borderRadius: '12px',
             fontSize: '0.85rem',
-            marginBottom: '1rem',
+            marginBottom: '1.25rem',
+            backdropFilter: 'blur(8px)',
           }}
         >
           {error}
@@ -74,7 +77,7 @@ export const CustomerLoginPage: React.FC = () => {
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
-          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
+          <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.4rem' }}>
             Email Address
           </label>
           <input
@@ -83,12 +86,22 @@ export const CustomerLoginPage: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              backgroundColor: '#FFFFFF',
+              color: '#0F172A',
+              fontSize: '0.9rem',
+              outline: 'none',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+            }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '0.3rem' }}>
+          <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.4rem' }}>
             Password
           </label>
           <input
@@ -97,7 +110,17 @@ export const CustomerLoginPage: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '0.9rem' }}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              backgroundColor: '#FFFFFF',
+              color: '#0F172A',
+              fontSize: '0.9rem',
+              outline: 'none',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+            }}
           />
         </div>
 
@@ -108,39 +131,40 @@ export const CustomerLoginPage: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            backgroundColor: '#10B981',
+            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
             color: '#FFF',
-            padding: '0.75rem',
-            borderRadius: '8px',
+            padding: '0.8rem 1rem',
+            borderRadius: '12px',
             border: 'none',
             fontSize: '0.95rem',
             fontWeight: 700,
             cursor: 'pointer',
             marginTop: '0.5rem',
+            boxShadow: '0 8px 20px -2px rgba(16, 185, 129, 0.45)',
           }}
         >
           <LogIn size={18} /> Sign In
         </button>
       </form>
 
-      <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#64748B' }}>
+      <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.825rem', color: 'rgba(255, 255, 255, 0.75)' }}>
         Don't have an account?{' '}
-        <Link to="/signup" style={{ color: '#10B981', fontWeight: 600, textDecoration: 'none' }}>
+        <Link to="/signup" style={{ color: '#34D399', fontWeight: 700, textDecoration: 'none' }}>
           Create an account
         </Link>
       </div>
 
-      <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid #E2E8F0', textAlign: 'center' }}>
+      <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
         <Link
           to="/employee/login"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.3rem',
+            gap: '0.35rem',
             fontSize: '0.8rem',
-            color: '#64748B',
+            color: '#FCD34D',
             textDecoration: 'none',
-            fontWeight: 600,
+            fontWeight: 700,
           }}
         >
           Are you a staff member? Employee Login <ArrowRight size={13} />

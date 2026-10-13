@@ -150,12 +150,12 @@ export const CatalogPage: React.FC = () => {
         try {
           osc.stop();
           osc.disconnect();
-        } catch {}
+        } catch { }
       });
       oscNodesRef.current = [];
       try {
         audioContextRef.current.close();
-      } catch {}
+      } catch { }
       audioContextRef.current = null;
     }
     setIsPlayingAudio(false);
@@ -296,406 +296,390 @@ export const CatalogPage: React.FC = () => {
             }}
           />
 
-        {/* Outer Hero Container */}
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '1440px',
-            display: 'grid',
-            gridTemplateColumns: 'minmax(360px, 1.2fr) minmax(340px, 1fr) minmax(320px, 1fr)',
-            alignItems: 'center',
-            position: 'relative',
-            zIndex: 10,
-            gap: '2.5rem',
-          }}
-        >
-          {/* LEFT COLUMN: 01/07 & Main Heading (Zooms bigger, fades and vanishes on scroll) */}
+          {/* Outer Hero Container */}
           <div
             style={{
+              width: '100%',
+              maxWidth: '1440px',
+              display: 'grid',
+              gridTemplateColumns: 'minmax(360px, 1.2fr) minmax(340px, 1fr) minmax(320px, 1fr)',
+              alignItems: 'center',
               position: 'relative',
-              paddingLeft: '3.5rem',
-              transform: `translate3d(0, ${textTranslateY}px, 0) scale(${textScale})`,
-              opacity: textOpacity,
-              filter: `blur(${textBlur}px)`,
-              transformOrigin: 'left center',
-              transition: 'transform 0.05s ease-out, opacity 0.05s ease-out',
-              pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
+              zIndex: 10,
+              gap: '2.5rem',
             }}
           >
-            {/* Left Vertical Bar & Tracker like Reference */}
+            {/* LEFT COLUMN: 01/07 & Main Heading (Zooms bigger, fades and vanishes on scroll) */}
             <div
               style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                bottom: 0,
+                position: 'relative',
+                paddingLeft: '3.5rem',
+                transform: `translate3d(0, ${textTranslateY}px, 0) scale(${textScale})`,
+                opacity: textOpacity,
+                filter: `blur(${textBlur}px)`,
+                transformOrigin: 'left center',
+                transition: 'transform 0.05s ease-out, opacity 0.05s ease-out',
+                pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
+              }}
+            >
+              {/* Left Vertical Bar & Tracker like Reference */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#F59E0B', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                  01
+                </div>
+                <div style={{ fontSize: '0.65rem', color: '#64748B', fontFamily: 'monospace', margin: '2px 0 6px 0' }}>
+                  / 07
+                </div>
+                {/* Vertical line with dashed marker */}
+                <div
+                  style={{
+                    width: '1px',
+                    flex: 1,
+                    background: 'linear-gradient(to bottom, #F59E0B 0%, rgba(245, 158, 11, 0.2) 60%, transparent 100%)',
+                    margin: '4px 0',
+                  }}
+                />
+                {/* Rotated text tag */}
+                <div
+                  style={{
+                    writingMode: 'vertical-rl',
+                    transform: 'rotate(180deg)',
+                    fontSize: '0.58rem',
+                    letterSpacing: '0.25em',
+                    color: '#64748B',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    paddingTop: '0.75rem',
+                  }}
+                >
+                  THE FORMULA
+                </div>
+              </div>
+
+              {/* Overline Subtitle */}
+              <div
+                className="anim-text-reveal-1"
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.22em',
+                  color: '#CBD5E1',
+                  textTransform: 'uppercase',
+                  marginBottom: '1.25rem',
+                }}
+              >
+                TITANIUM FULL SYNTHETIC MOTOR OIL
+              </div>
+
+              {/* Huge Clean Sans Headline matching Reference Design */}
+              <h1
+                className="hero-large-headline anim-text-reveal-2"
+                style={{
+                  fontFamily: "'Space Grotesk', -apple-system, sans-serif",
+                  fontSize: 'clamp(3.8rem, 5.8vw, 5.2rem)',
+                  fontWeight: 400,
+                  lineHeight: 1.02,
+                  letterSpacing: '-0.035em',
+                  color: '#FFFFFF',
+                  margin: '0 0 1.75rem 0',
+                  cursor: 'default',
+                  display: 'block',
+                }}
+              >
+                A world
+                <br />
+                within.
+              </h1>
+
+              {/* Description matching Reference text structure */}
+              <p
+                className="anim-text-reveal-3"
+                style={{
+                  fontSize: '1rem',
+                  lineHeight: 1.6,
+                  color: '#94A3B8',
+                  maxWidth: '380px',
+                  margin: '0 0 3rem 0',
+                }}
+              >
+                Engineered with molecular titanium and ester synthetic base.
+                <br />
+                <strong style={{ color: '#FFFFFF', fontWeight: 600 }}>Zero thermal breakdown.</strong> In aerospace canisters.
+              </p>
+
+              {/* 01 ────── THE TITANIUM CANISTER */}
+              <div
+                className="anim-text-reveal-4"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1.25rem',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.18em',
+                  color: '#CBD5E1',
+                }}
+              >
+                <span style={{ color: '#F59E0B' }}>01</span>
+                <div style={{ width: '60px', height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.25)' }} />
+                <span style={{ color: '#94A3B8', textTransform: 'uppercase' }}>THE TITANIUM CANISTER</span>
+              </div>
+            </div>
+
+            {/* CENTER COLUMN: Hero Stage Spacer for Persistent 3D Oil Bottle */}
+            <div
+              style={{
+                position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '320px',
+                maxWidth: '460px',
+                width: '100%',
+                minHeight: '540px',
+                pointerEvents: 'none',
               }}
             >
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#F59E0B', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
-                01
-              </div>
-              <div style={{ fontSize: '0.65rem', color: '#64748B', fontFamily: 'monospace', margin: '2px 0 6px 0' }}>
-                / 07
-              </div>
-              {/* Vertical line with dashed marker */}
+              {/* Glowing amber halo ring behind 3D model */}
               <div
                 style={{
-                  width: '1px',
-                  flex: 1,
-                  background: 'linear-gradient(to bottom, #F59E0B 0%, rgba(245, 158, 11, 0.2) 60%, transparent 100%)',
-                  margin: '4px 0',
+                  position: 'absolute',
+                  width: '380px',
+                  height: '540px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(217, 119, 6, 0.1) 50%, transparent 75%)',
+                  filter: 'blur(35px)',
+                  pointerEvents: 'none',
+                  zIndex: 1,
+                  opacity: textOpacity,
+                  transition: 'opacity 0.05s ease-out',
                 }}
               />
-              {/* Rotated text tag */}
+
+              {/* Base Reflection / Shadow Oval */}
               <div
                 style={{
-                  writingMode: 'vertical-rl',
-                  transform: 'rotate(180deg)',
-                  fontSize: '0.58rem',
-                  letterSpacing: '0.25em',
-                  color: '#64748B',
-                  fontWeight: 800,
-                  textTransform: 'uppercase',
-                  paddingTop: '0.75rem',
+                  width: '260px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.95) 0%, rgba(245, 158, 11, 0.18) 40%, transparent 80%)',
+                  marginTop: '450px',
+                  filter: 'blur(8px)',
+                  zIndex: 1,
+                  opacity: textOpacity,
+                  transition: 'opacity 0.05s ease-out',
+                }}
+              />
+            </div>
+
+            {/* RIGHT COLUMN: Pure possibility & Subtitle (Zooms bigger, fades and vanishes on scroll) */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                paddingLeft: '2rem',
+                transform: `translate3d(0, ${textTranslateY * 0.85}px, 0) scale(${textScale})`,
+                opacity: textOpacity,
+                filter: `blur(${textBlur}px)`,
+                transformOrigin: 'right center',
+                transition: 'transform 0.05s ease-out, opacity 0.05s ease-out',
+                pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
+              }}
+            >
+              {/* Serif Italic Statement matching Reference Design */}
+              <h2
+                className="hero-italic-statement anim-text-reveal-2"
+                style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontStyle: 'italic',
+                  fontSize: 'clamp(2.8rem, 4.4vw, 3.8rem)',
+                  fontWeight: 400,
+                  color: '#FFFFFF',
+                  letterSpacing: '-0.015em',
+                  lineHeight: 1.08,
+                  margin: '0 0 1.5rem 0',
+                  cursor: 'default',
+                  display: 'block',
                 }}
               >
-                THE FORMULA
-              </div>
+                Pure possibility.
+              </h2>
+
+
+
+              {/* Action pill to explore catalog */}
+              <a
+                href="#catalog-section"
+                className="anim-text-reveal-4"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1.35rem',
+                  borderRadius: '9999px',
+                  border: '1px solid rgba(245, 158, 11, 0.35)',
+                  backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                  color: '#F59E0B',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
+                  textDecoration: 'none',
+                  transition: 'all 0.25s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(245, 158, 11, 0.22)';
+                  e.currentTarget.style.borderColor = '#F59E0B';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.25)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(245, 158, 11, 0.08)';
+                  e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <span>Explore Engine Fluids</span>
+                <ArrowDown size={14} />
+              </a>
             </div>
+          </div>
 
-            {/* Overline Subtitle */}
-            <div
-              className="anim-text-reveal-1"
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                letterSpacing: '0.22em',
-                color: '#CBD5E1',
-                textTransform: 'uppercase',
-                marginBottom: '1.25rem',
-              }}
-            >
-              TITANIUM FULL SYNTHETIC MOTOR OIL
-            </div>
+          {/* Far Right Edge Floating Tab "DOC <" */}
+          <div
+            onClick={() => {
+              const el = document.getElementById('catalog-section');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '46%',
+              transform: 'translateY(-50%)',
+              backgroundColor: '#0F1117',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
+              borderRight: 'none',
+              borderTopLeftRadius: '10px',
+              borderBottomLeftRadius: '10px',
+              padding: '0.75rem 0.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.25rem',
+              cursor: 'pointer',
+              boxShadow: '-4px 0 15px rgba(0, 0, 0, 0.5)',
+              zIndex: 30,
+              opacity: textOpacity,
+              pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
+              transition: 'opacity 0.08s ease-out, background-color 0.2s',
+            }}
+            title="Jump to Catalog"
+          >
+            <div style={{ fontWeight: 900, fontSize: '0.8rem', color: '#FFFFFF', letterSpacing: '-0.02em' }}>DOC</div>
+            <div style={{ fontSize: '0.65rem', color: '#F59E0B' }}>&lt;</div>
+          </div>
 
-            {/* Huge Clean Sans Headline matching Reference Design */}
-            <h1
-              className="hero-large-headline anim-text-reveal-2"
-              style={{
-                fontFamily: "'Space Grotesk', -apple-system, sans-serif",
-                fontSize: 'clamp(3.8rem, 5.8vw, 5.2rem)',
-                fontWeight: 400,
-                lineHeight: 1.02,
-                letterSpacing: '-0.035em',
-                color: '#FFFFFF',
-                margin: '0 0 1.75rem 0',
-                cursor: 'default',
-                display: 'block',
-              }}
-            >
-              A world
-              <br />
-              within.
-            </h1>
-
-            {/* Description matching Reference text structure */}
-            <p
-              className="anim-text-reveal-3"
-              style={{
-                fontSize: '1rem',
-                lineHeight: 1.6,
-                color: '#94A3B8',
-                maxWidth: '380px',
-                margin: '0 0 3rem 0',
-              }}
-            >
-              Engineered with molecular titanium and ester synthetic base.
-              <br />
-              <strong style={{ color: '#FFFFFF', fontWeight: 600 }}>Zero thermal breakdown.</strong> In aerospace canisters.
-            </p>
-
-            {/* 01 ────── THE TITANIUM CANISTER */}
-            <div
-              className="anim-text-reveal-4"
+          {/* BOTTOM FLOATING CONTROLS MATCHING REFERENCE IMAGE */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '24px',
+              right: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              zIndex: 40,
+              opacity: textOpacity,
+              pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
+              transition: 'opacity 0.08s ease-out',
+            }}
+          >
+            {/* Play Engine Acoustics */}
+            <button
+              onClick={toggleEngineAudio}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '1.25rem',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                letterSpacing: '0.18em',
-                color: '#CBD5E1',
-              }}
-            >
-              <span style={{ color: '#F59E0B' }}>01</span>
-              <div style={{ width: '60px', height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.25)' }} />
-              <span style={{ color: '#94A3B8', textTransform: 'uppercase' }}>THE TITANIUM CANISTER</span>
-            </div>
-          </div>
-
-          {/* CENTER COLUMN: Hero Stage Spacer for Persistent 3D Oil Bottle */}
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minWidth: '320px',
-              maxWidth: '460px',
-              width: '100%',
-              minHeight: '540px',
-              pointerEvents: 'none',
-            }}
-          >
-            {/* Glowing amber halo ring behind 3D model */}
-            <div
-              style={{
-                position: 'absolute',
-                width: '380px',
-                height: '540px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, rgba(217, 119, 6, 0.1) 50%, transparent 75%)',
-                filter: 'blur(35px)',
-                pointerEvents: 'none',
-                zIndex: 1,
-                opacity: textOpacity,
-                transition: 'opacity 0.05s ease-out',
-              }}
-            />
-
-            {/* Base Reflection / Shadow Oval */}
-            <div
-              style={{
-                width: '260px',
-                height: '24px',
-                borderRadius: '50%',
-                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.95) 0%, rgba(245, 158, 11, 0.18) 40%, transparent 80%)',
-                marginTop: '450px',
-                filter: 'blur(8px)',
-                zIndex: 1,
-                opacity: textOpacity,
-                transition: 'opacity 0.05s ease-out',
-              }}
-            />
-          </div>
-
-          {/* RIGHT COLUMN: Pure possibility & Subtitle (Zooms bigger, fades and vanishes on scroll) */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-              paddingLeft: '2rem',
-              transform: `translate3d(0, ${textTranslateY * 0.85}px, 0) scale(${textScale})`,
-              opacity: textOpacity,
-              filter: `blur(${textBlur}px)`,
-              transformOrigin: 'right center',
-              transition: 'transform 0.05s ease-out, opacity 0.05s ease-out',
-              pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
-            }}
-          >
-            {/* Serif Italic Statement matching Reference Design */}
-            <h2
-              className="hero-italic-statement anim-text-reveal-2"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontStyle: 'italic',
-                fontSize: 'clamp(2.8rem, 4.4vw, 3.8rem)',
-                fontWeight: 400,
-                color: '#FFFFFF',
-                letterSpacing: '-0.015em',
-                lineHeight: 1.08,
-                margin: '0 0 1.5rem 0',
-                cursor: 'default',
-                display: 'block',
-              }}
-            >
-              Pure possibility.
-            </h2>
-
-            {/* Subtext matching reference */}
-            <div
-              className="anim-text-reveal-3"
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                letterSpacing: '0.22em',
-                color: '#CBD5E1',
-                lineHeight: 1.8,
-                textTransform: 'uppercase',
-                marginBottom: '2rem',
-              }}
-            >
-              FROM DISANAYAKE OIL.
-              <br />
-              INTO YOUR ENGINE.
-            </div>
-
-            {/* Action pill to explore catalog */}
-            <a
-              href="#catalog-section"
-              className="anim-text-reveal-4"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.65rem 1.35rem',
+                gap: '0.45rem',
+                backgroundColor: isPlayingAudio ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                border: isPlayingAudio ? '1px solid #F59E0B' : '1px solid rgba(255, 255, 255, 0.12)',
+                color: isPlayingAudio ? '#F59E0B' : '#FFFFFF',
                 borderRadius: '9999px',
-                border: '1px solid rgba(245, 158, 11, 0.35)',
-                backgroundColor: 'rgba(245, 158, 11, 0.08)',
-                color: '#F59E0B',
+                padding: '0.55rem 1.15rem',
                 fontSize: '0.8rem',
                 fontWeight: 700,
-                letterSpacing: '0.05em',
-                textDecoration: 'none',
-                transition: 'all 0.25s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(245, 158, 11, 0.22)';
-                e.currentTarget.style.borderColor = '#F59E0B';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.25)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(245, 158, 11, 0.08)';
-                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.35)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
+                cursor: 'pointer',
+                backdropFilter: 'blur(12px)',
+                transition: 'all 0.2s ease',
               }}
             >
-              <span>Explore Engine Fluids</span>
-              <ArrowDown size={14} />
-            </a>
+              {isPlayingAudio ? <Pause size={13} fill="#F59E0B" /> : <Play size={13} fill="#FFF" />}
+              <span>{isPlayingAudio ? 'Engine Revving...' : 'Play'}</span>
+            </button>
+
+            {/* Sound / Viscosity Specs Button */}
+            <button
+              onClick={() => setShowSpecsModal(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                color: '#FFFFFF',
+                borderRadius: '9999px',
+                padding: '0.55rem 1.15rem',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                backdropFilter: 'blur(12px)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <Volume2 size={14} color="#CBD5E1" />
+              <span>Sound On</span>
+            </button>
+
+            {/* White Pill Button: 'Talk to Oil Specialist' */}
+            <button
+              onClick={() => setShowSpecialistModal(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.55rem',
+                backgroundColor: '#FFFFFF',
+                color: '#07080B',
+                border: 'none',
+                borderRadius: '9999px',
+                padding: '0.55rem 1.35rem',
+                fontSize: '0.825rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(255, 255, 255, 0.18)',
+                transition: 'transform 0.2s, background-color 0.2s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F1F5F9')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+            >
+              <Sparkles size={15} color="#07080B" fill="#07080B" />
+              <span>Talk to Morpho</span>
+            </button>
           </div>
-        </div>
-
-        {/* Far Right Edge Floating Tab "DOC <" */}
-        <div
-          onClick={() => {
-            const el = document.getElementById('catalog-section');
-            el?.scrollIntoView({ behavior: 'smooth' });
-          }}
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: '46%',
-            transform: 'translateY(-50%)',
-            backgroundColor: '#0F1117',
-            border: '1px solid rgba(245, 158, 11, 0.25)',
-            borderRight: 'none',
-            borderTopLeftRadius: '10px',
-            borderBottomLeftRadius: '10px',
-            padding: '0.75rem 0.5rem',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.25rem',
-            cursor: 'pointer',
-            boxShadow: '-4px 0 15px rgba(0, 0, 0, 0.5)',
-            zIndex: 30,
-            opacity: textOpacity,
-            pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
-            transition: 'opacity 0.08s ease-out, background-color 0.2s',
-          }}
-          title="Jump to Catalog"
-        >
-          <div style={{ fontWeight: 900, fontSize: '0.8rem', color: '#FFFFFF', letterSpacing: '-0.02em' }}>DOC</div>
-          <div style={{ fontSize: '0.65rem', color: '#F59E0B' }}>&lt;</div>
-        </div>
-
-        {/* BOTTOM FLOATING CONTROLS MATCHING REFERENCE IMAGE */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '24px',
-            right: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            zIndex: 40,
-            opacity: textOpacity,
-            pointerEvents: textOpacity < 0.1 ? 'none' : 'auto',
-            transition: 'opacity 0.08s ease-out',
-          }}
-        >
-          {/* Play Engine Acoustics */}
-          <button
-            onClick={toggleEngineAudio}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              backgroundColor: isPlayingAudio ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: isPlayingAudio ? '1px solid #F59E0B' : '1px solid rgba(255, 255, 255, 0.12)',
-              color: isPlayingAudio ? '#F59E0B' : '#FFFFFF',
-              borderRadius: '9999px',
-              padding: '0.55rem 1.15rem',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              backdropFilter: 'blur(12px)',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {isPlayingAudio ? <Pause size={13} fill="#F59E0B" /> : <Play size={13} fill="#FFF" />}
-            <span>{isPlayingAudio ? 'Engine Revving...' : 'Play'}</span>
-          </button>
-
-          {/* Sound / Viscosity Specs Button */}
-          <button
-            onClick={() => setShowSpecsModal(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#FFFFFF',
-              borderRadius: '9999px',
-              padding: '0.55rem 1.15rem',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              backdropFilter: 'blur(12px)',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <Volume2 size={14} color="#CBD5E1" />
-            <span>Sound On</span>
-          </button>
-
-          {/* White Pill Button: 'Talk to Oil Specialist' */}
-          <button
-            onClick={() => setShowSpecialistModal(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              backgroundColor: '#FFFFFF',
-              color: '#07080B',
-              border: 'none',
-              borderRadius: '9999px',
-              padding: '0.55rem 1.35rem',
-              fontSize: '0.825rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(255, 255, 255, 0.18)',
-              transition: 'transform 0.2s, background-color 0.2s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F1F5F9')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
-          >
-            <Sparkles size={15} color="#07080B" fill="#07080B" />
-            <span>Talk to Morpho</span>
-          </button>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
 
       {/* ======================================================== */}
       {/* CATALOG SECTION (INVENTORY & LUBRICANT STORE) */}

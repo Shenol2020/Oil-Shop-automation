@@ -1,84 +1,54 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Calculator,
-  ClipboardList,
-  CalendarDays,
-  Clock,
-  UserPlus,
-  ArrowRight,
-} from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
+import HoverRevealCards, { type CardItem } from '@/components/ui/cards';
 
 export const EmployeeDashboard: React.FC = () => {
   const { user, role } = useAuthStore();
   const isMainAdmin = role === 'MainAdmin';
 
-  const sections = [
+  const portalItems: CardItem[] = [
     {
+      id: 'pos',
       title: 'POS System',
-      description: 'In-store cashier checkout terminal, product inventory, sales logging, supplier directory, and purchase restock orders.',
-      icon: Calculator,
+      subtitle: 'Checkout & Stock',
+      imageUrl: '/portal_pos.jpg',
       link: '/employee/pos',
-      color: '#10B981',
-      bg: '#ECFDF5',
-      badge: 'Terminal & Supply',
-      quickLinks: [
-        { label: 'Terminal', to: '/employee/pos?tab=terminal' },
-        { label: 'Inventory', to: '/employee/pos?tab=products' },
-        { label: 'Suppliers', to: '/employee/pos?tab=suppliers' },
-        { label: 'Purchase Orders', to: '/employee/pos?tab=purchase-orders' },
-      ],
     },
     {
+      id: 'orders',
       title: 'Order Management',
-      description: 'Review pending online orders submitted by customers, verify items & approve dispatches.',
-      icon: ClipboardList,
+      subtitle: 'Dispatch & Packing',
+      imageUrl: '/portal_orders.jpg',
       link: '/employee/orders',
-      color: '#3B82F6',
-      bg: '#EFF6FF',
-      badge: 'Review & Approve',
     },
     {
+      id: 'leave',
       title: 'Leave Management',
-      description: 'Submit leave requests, inspect balance allowances & process administrative approvals.',
-      icon: CalendarDays,
+      subtitle: 'Time-Off & Vacation',
+      imageUrl: '/portal_leave.jpg',
       link: '/employee/leave',
-      color: '#8B5CF6',
-      bg: '#F5F3FF',
-      badge: 'Staff & Manager',
     },
     {
+      id: 'attendance',
       title: 'Attendance & Salary',
-      description: 'Scan employee QR badges with camera, log arrival/departure & compute daily earnings.',
-      icon: Clock,
+      subtitle: 'QR Clock & Payroll',
+      imageUrl: '/portal_attendance.jpg',
       link: '/employee/attendance-salary',
-      color: '#F59E0B',
-      bg: '#FEF3C7',
-      badge: 'QR Scanner',
-    },
-    {
-      title: 'Account Creation Tool',
-      description: 'Onboard new shop staff members, generate official QR credentials, and manage system users.',
-      icon: UserPlus,
-      link: '/employee/admin/accounts',
-      color: '#D97706',
-      bg: '#FEF3C7',
-      badge: isMainAdmin ? 'MainAdmin Access' : 'Restricted (MainAdmin)',
-      restricted: !isMainAdmin,
     },
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '1280px', margin: '0 auto', paddingBottom: '3rem' }}>
       {/* Welcome Banner */}
       <div
         style={{
           background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
           color: '#FFF',
-          padding: '2rem',
-          borderRadius: '16px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          padding: '2rem 2.25rem',
+          borderRadius: '20px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -87,8 +57,8 @@ export const EmployeeDashboard: React.FC = () => {
         }}
       >
         <div>
-          <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Internal Workspace
+          <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Operational Workspace
           </div>
           <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: '0.25rem 0', color: '#FFF' }}>
             Welcome back, {user?.name || 'Staff Member'}
@@ -97,130 +67,43 @@ export const EmployeeDashboard: React.FC = () => {
             Role: <strong style={{ color: isMainAdmin ? '#FBBF24' : '#38BDF8' }}>{role || 'ShopStaff'}</strong> | Status: Online
           </p>
         </div>
+
+        {isMainAdmin && (
+          <Link
+            to="/employee/admin/accounts"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              backgroundColor: 'rgba(245, 158, 11, 0.15)',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              color: '#FCD34D',
+              padding: '0.65rem 1.15rem',
+              borderRadius: '9999px',
+              fontSize: '0.825rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              transition: 'background-color 0.2s',
+            }}
+          >
+            <ShieldCheck size={16} />
+            <span>Account Creation Tool</span>
+          </Link>
+        )}
       </div>
 
-      {/* Grid of the 5 Sections */}
+      {/* Minimalist 4-Card Portal Grid using HoverRevealCards */}
       <div>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A', marginBottom: '1rem' }}>
-          Operational Portals
-        </h2>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-            gap: '1.25rem',
-          }}
-        >
-          {sections.map((section) => {
-            const Icon = section.icon;
-
-            return (
-              <div
-                key={section.title}
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '14px',
-                  border: '1px solid #E2E8F0',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-                  opacity: section.restricted ? 0.75 : 1,
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                }}
-              >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <div
-                      style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '12px',
-                        backgroundColor: section.bg,
-                        color: section.color,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Icon size={24} />
-                    </div>
-                    <span
-                      style={{
-                        fontSize: '0.7rem',
-                        fontWeight: 700,
-                        padding: '0.2rem 0.55rem',
-                        borderRadius: '9999px',
-                        backgroundColor: section.bg,
-                        color: section.color,
-                      }}
-                    >
-                      {section.badge}
-                    </span>
-                  </div>
-
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.5rem 0' }}>
-                    {section.title}
-                  </h3>
-                  <p style={{ fontSize: '0.875rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
-                    {section.description}
-                  </p>
-                </div>
-
-                <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #F1F5F9' }}>
-                  {section.restricted ? (
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94A3B8' }}>
-                      Restricted to MainAdmin role
-                    </span>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                      <Link
-                        to={section.link}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                          color: section.color,
-                          fontWeight: 700,
-                          fontSize: '0.875rem',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        Launch Module <ArrowRight size={15} />
-                      </Link>
-
-                      {section.quickLinks && (
-                        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                          {section.quickLinks.map((ql) => (
-                            <Link
-                              key={ql.label}
-                              to={ql.to}
-                              style={{
-                                fontSize: '0.72rem',
-                                fontWeight: 700,
-                                padding: '0.2rem 0.5rem',
-                                borderRadius: '6px',
-                                backgroundColor: '#F1F5F9',
-                                color: '#334155',
-                                textDecoration: 'none',
-                                border: '1px solid #E2E8F0',
-                                transition: 'all 0.15s',
-                              }}
-                            >
-                              {ql.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.25rem' }}>
+          <div>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              Operational Portals
+            </h2>
+          </div>
         </div>
+
+        {/* Hover Reveal Card Grid */}
+        <HoverRevealCards items={portalItems} className="max-w-none p-0" />
       </div>
     </div>
   );

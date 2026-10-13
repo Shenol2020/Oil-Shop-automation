@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, ArrowRight, Droplets, Compass, Users, PhoneCall, ChevronDown } from 'lucide-react';
+import { ShoppingCart, User, LogOut, ArrowRight, Droplets, PhoneCall } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 
@@ -8,7 +8,6 @@ export const CustomerLayout: React.FC = () => {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const [lang, setLang] = useState<'EN' | 'SI'>('EN');
 
   const handleLogout = () => {
     logout();
@@ -110,46 +109,6 @@ export const CustomerLayout: React.FC = () => {
             </NavLink>
 
             <a
-              href="#catalog-section"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                textDecoration: 'none',
-                fontWeight: 600,
-                fontSize: '0.825rem',
-                color: '#CBD5E1',
-                padding: '0.45rem 0.95rem',
-                borderRadius: '9999px',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <Compass size={14} />
-              <span>Discover</span>
-              <ChevronDown size={12} color="#94A3B8" />
-            </a>
-
-            <a
-              href="#viscosity-section"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                textDecoration: 'none',
-                fontWeight: 600,
-                fontSize: '0.825rem',
-                color: '#CBD5E1',
-                padding: '0.45rem 0.95rem',
-                borderRadius: '9999px',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <Users size={14} />
-              <span>Viscosity Guide</span>
-              <ChevronDown size={12} color="#94A3B8" />
-            </a>
-
-            <a
               href="#contact-section"
               style={{
                 display: 'flex',
@@ -171,32 +130,6 @@ export const CustomerLayout: React.FC = () => {
 
           {/* Right Controls: Language, Promo, Cart & Auth */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            {/* Language Toggle */}
-            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <span
-                onClick={() => setLang('EN')}
-                style={{
-                  cursor: 'pointer',
-                  color: lang === 'EN' ? '#FFFFFF' : '#64748B',
-                  borderBottom: lang === 'EN' ? '2px solid #F59E0B' : 'none',
-                  paddingBottom: '2px',
-                }}
-              >
-                EN
-              </span>
-              <span>/</span>
-              <span
-                onClick={() => setLang('SI')}
-                style={{
-                  cursor: 'pointer',
-                  color: lang === 'SI' ? '#FFFFFF' : '#64748B',
-                  borderBottom: lang === 'SI' ? '2px solid #F59E0B' : 'none',
-                  paddingBottom: '2px',
-                }}
-              >
-                SI
-              </span>
-            </div>
 
             {/* Promo Pill Badge */}
             <div
@@ -239,7 +172,7 @@ export const CustomerLayout: React.FC = () => {
               }}
             >
               <ShoppingCart size={15} color="#07080B" />
-              <span>Shop DOC ({totalItems})</span>
+              <span>Shoping Cart ({totalItems})</span>
               <span style={{ fontSize: '0.85rem' }}>↗</span>
             </Link>
 

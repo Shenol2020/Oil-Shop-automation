@@ -122,9 +122,6 @@ export const POSTerminalPage: React.FC = () => {
             <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
               In-Store POS & Supply Chain Management
             </h1>
-            <p style={{ color: '#64748B', fontSize: '0.8rem', margin: '0.15rem 0 0 0' }}>
-              Cashier checkout, live inventory, sales logging, supplier directory, and purchase restock orders.
-            </p>
           </div>
         </div>
 

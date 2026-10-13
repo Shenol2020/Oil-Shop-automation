@@ -176,8 +176,8 @@ export const OilBottle3DExperience: React.FC<OilBottle3DExperienceProps> = ({ on
       // Over hero detection
       setIsOverHero(scrollY < 650);
 
-      // Continuous rotation as user scrolls through the page
-      const baseScrollAngle = scrollProgress * Math.PI * 4.5;
+      // Continuous rotation as user scrolls through the page (tuned for smooth, calm showroom speed)
+      const baseScrollAngle = scrollProgress * Math.PI * 1.8;
       targetRotationY = baseScrollAngle + dragRotationOffset;
 
       // Transition to Background when scrolling past hero into "Direct Lubricant Inventory"
@@ -192,22 +192,22 @@ export const OilBottle3DExperience: React.FC<OilBottle3DExperienceProps> = ({ on
       targetScaleFactor = 1.0 + catalogTransition * 0.65; // High presence in backdrop
 
       // Subtle dynamic tilt on X and Z during scroll
-      targetRotationX = Math.sin(scrollProgress * Math.PI * 2.5) * 0.18;
-      targetRotationZ = -Math.sin(scrollProgress * Math.PI * 1.5) * 0.12;
+      targetRotationX = Math.sin(scrollProgress * Math.PI * 1.5) * 0.10;
+      targetRotationZ = -Math.sin(scrollProgress * Math.PI) * 0.07;
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       const normX = (e.clientX / width) * 2 - 1;
       const normY = -(e.clientY / height) * 2 - 1;
-      mouseX = normX * 0.3;
-      mouseY = normY * 0.2;
+      mouseX = normX * 0.22;
+      mouseY = normY * 0.15;
 
       if (isDragging && scrollY < 650) {
         const deltaX = e.clientX - prevMouseX;
-        dragRotationOffset += deltaX * 0.012;
+        dragRotationOffset += deltaX * 0.008;
         const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
         const scrollProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
-        targetRotationY = scrollProgress * Math.PI * 4.5 + dragRotationOffset;
+        targetRotationY = scrollProgress * Math.PI * 1.8 + dragRotationOffset;
         prevMouseX = e.clientX;
       }
     };
@@ -262,16 +262,16 @@ export const OilBottle3DExperience: React.FC<OilBottle3DExperienceProps> = ({ on
       modelGroup.scale.setScalar(newScale);
 
       // Continuous 360 Background Rotation:
-      // When in catalog, bottle continuously rotates gracefully so it's always alive behind the products!
+      // When in catalog, bottle continuously rotates calmly and gently in the background
       const catalogTransition = Math.min(1, Math.max(0, (scrollY - 150) / 600));
-      const bgSpin = catalogTransition * elapsedTime * 0.35;
+      const bgSpin = catalogTransition * elapsedTime * 0.10;
 
-      const finalTargetY = targetRotationY + bgSpin + (scrollY < 650 ? mouseX * 0.4 : 0);
-      const finalTargetX = targetRotationX - (scrollY < 650 ? mouseY * 0.3 : 0);
+      const finalTargetY = targetRotationY + bgSpin + (scrollY < 650 ? mouseX * 0.3 : 0);
+      const finalTargetX = targetRotationX - (scrollY < 650 ? mouseY * 0.2 : 0);
 
-      modelGroup.rotation.y += (finalTargetY - modelGroup.rotation.y) * 0.075;
-      modelGroup.rotation.x += (finalTargetX - modelGroup.rotation.x) * 0.075;
-      modelGroup.rotation.z += (targetRotationZ - modelGroup.rotation.z) * 0.075;
+      modelGroup.rotation.y += (finalTargetY - modelGroup.rotation.y) * 0.05;
+      modelGroup.rotation.x += (finalTargetX - modelGroup.rotation.x) * 0.05;
+      modelGroup.rotation.z += (targetRotationZ - modelGroup.rotation.z) * 0.05;
 
       // Aura light follows the bottle in 3D space with warm pulsing glow
       auraLight.position.set(modelGroup.position.x, modelGroup.position.y, modelGroup.position.z - 0.7);

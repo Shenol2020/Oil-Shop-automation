@@ -8,6 +8,7 @@ import {
   Fuel,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { LiquidButton, MetalButton } from '@/components/ui/liquid-glass-button';
 
 export const EmployeeLayout: React.FC = () => {
   const { user, role, logout } = useAuthStore();
@@ -74,25 +75,14 @@ export const EmployeeLayout: React.FC = () => {
 
         {/* User profile & actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <Link
-            to="/shop"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              textDecoration: 'none',
-              fontSize: '0.825rem',
-              color: '#475569',
-              fontWeight: 600,
-              padding: '0.45rem 0.75rem',
-              borderRadius: '8px',
-              border: '1px solid #E2E8F0',
-              backgroundColor: '#FAFAFA',
-            }}
+          <MetalButton
+            variant="default"
+            onClick={() => navigate('/shop')}
+            className="!h-9 !px-3.5 !text-xs font-semibold gap-1.5 inline-flex items-center"
           >
-            <Store size={15} />
-            <span>Switch to Customer Mart</span>
-          </Link>
+            <Store size={14} className="inline mr-1" />
+            Switch to Customer Mart
+          </MetalButton>
 
           <div style={{ height: '24px', width: '1px', backgroundColor: '#E2E8F0' }} />
 
@@ -133,25 +123,15 @@ export const EmployeeLayout: React.FC = () => {
             </div>
           </div>
 
-          <button
+          <LiquidButton
+            variant="redGlass"
+            size="sm"
             onClick={handleLogout}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.45rem 0.85rem',
-              borderRadius: '8px',
-              border: '1px solid #FECACA',
-              backgroundColor: '#FFF',
-              color: '#EF4444',
-              fontSize: '0.825rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
+            className="!h-9 !px-4"
           >
             <LogOut size={15} />
-            Logout
-          </button>
+            <span>Logout</span>
+          </LiquidButton>
         </div>
       </header>
 
