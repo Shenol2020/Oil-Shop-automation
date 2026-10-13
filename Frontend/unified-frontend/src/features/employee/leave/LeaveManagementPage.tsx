@@ -15,7 +15,7 @@ interface LeaveItem {
   id: number;
   userId: string | number;
   userName: string;
-  leaveType: 'ANNUAL' | 'CASUAL' | 'SICK' | 'MATERNITY' | 'OTHER';
+  leaveType: 'ANNUAL' | 'CASUAL' | 'SICK' | 'OTHER'; // Removed 'MATERNITY'
   startDate: string;
   endDate: string;
   reason: string;
@@ -110,7 +110,7 @@ export const LeaveManagementPage: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  const [leaveType, setLeaveType] = useState<'ANNUAL' | 'CASUAL' | 'SICK' | 'MATERNITY' | 'OTHER'>('ANNUAL');
+  const [leaveType, setLeaveType] = useState<'ANNUAL' | 'CASUAL' | 'SICK' | 'OTHER'>('ANNUAL'); // Removed 'MATERNITY'
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
@@ -130,7 +130,6 @@ export const LeaveManagementPage: React.FC = () => {
 
     const fetchBalances = async () => {
       try {
-        // Attempt to fetch from DB endpoint
         const res = await fetch(`http://localhost:8081/api/leaves/balances/${user?.userId}`);
         if (res.ok) {
           const data = await res.json();
@@ -140,10 +139,9 @@ export const LeaveManagementPage: React.FC = () => {
             SICK: data.sick || 0,
             OTHER: data.other || 0,
           });
-          return; // Exit if backend fetch is successful
+          return;
         }
       } catch {
-        // Fallback: If DB endpoint is unavailable, calculate dynamically from APPROVED leaves
         const userApprovedLeaves = leaves.filter(
             (l) => String(l.userId) === String(user?.userId) && l.status === 'APPROVED'
         );
@@ -691,7 +689,6 @@ export const LeaveManagementPage: React.FC = () => {
                       <option value="ANNUAL">Annual Leave</option>
                       <option value="CASUAL">Casual Leave</option>
                       <option value="SICK">Sick / Medical Leave</option>
-                      <option value="MATERNITY">Maternity Leave</option>
                       <option value="OTHER">Other Reason</option>
                     </select>
                   </div>
