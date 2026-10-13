@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -22,8 +23,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
+
+      - name: Check Java version
+        run: |
+          java -version
+          mvn -version
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -47,9 +53,15 @@ jobs:
         working-directory: Backend
         run: mvn -B clean package -DskipTests
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy to Azure App Service
         uses: Azure/webapps-deploy@v3
         with:
           app-name: oilshopweb
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: Backend/target/*.jar
