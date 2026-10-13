@@ -3,18 +3,29 @@ package DisanayakeOilCenter.controller;
 
 import DisanayakeOilCenter.dto.OrderRequestDto;
 import DisanayakeOilCenter.model.CustomerOrder;
+import DisanayakeOilCenter.repository.CustomerOrderRepository;
 import DisanayakeOilCenter.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private CustomerOrderRepository customerOrderRepository;
+
+    @GetMapping
+    public ResponseEntity<List<CustomerOrder>> getAllOrders() {
+        return ResponseEntity.ok(customerOrderRepository.findAll());
+    }
 
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody OrderRequestDto orderRequest) {
@@ -24,5 +35,13 @@ public class OrderController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable Long orderId, @RequestParam String status) {
+        return customerOrderRepository.findById(orderId).map(order -> {
+            order.setOrderStatus(status);
+            return ResponseEntity.ok(customerOrderRepository.save(order));
+        }).orElse(ResponseEntity.notFound().build());
     }
 }

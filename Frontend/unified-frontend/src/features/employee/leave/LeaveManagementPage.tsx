@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   PlusCircle,
   CheckCircle,
@@ -6,6 +7,7 @@ import {
   User,
   Check,
   RefreshCw,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -21,51 +23,10 @@ interface LeaveItem {
   adminComment?: string;
 }
 
-const DEFAULT_LEAVES: LeaveItem[] = [
-  {
-    id: 1,
-    userId: '1',
-    userName: 'Kasun Bandara',
-    leaveType: 'CASUAL',
-    startDate: '2026-10-15',
-    endDate: '2026-10-16',
-    reason: 'Family urgent commitment in Kandy',
-    status: 'PENDING',
-  },
-  {
-    id: 2,
-    userId: '2',
-    userName: 'Nuwan Pradeep',
-    leaveType: 'SICK',
-    startDate: '2026-10-18',
-    endDate: '2026-10-19',
-    reason: 'Doctor prescribed bed rest following fever',
-    status: 'APPROVED',
-    adminComment: 'Approved by MainAdmin',
-  },
-  {
-    id: 3,
-    userId: '1',
-    userName: 'Kasun Bandara',
-    leaveType: 'ANNUAL',
-    startDate: '2026-09-02',
-    endDate: '2026-09-05',
-    reason: 'Annual personal leave',
-    status: 'APPROVED',
-    adminComment: 'Annual quota utilized',
-  },
-];
-
 export const LeaveManagementPage: React.FC = () => {
   const { user } = useAuthStore();
-  const [leaves, setLeaves] = useState<LeaveItem[]>(() => {
-    try {
-      const stored = localStorage.getItem('doc_leave_records');
-      return stored ? JSON.parse(stored) : DEFAULT_LEAVES;
-    } catch {
-      return DEFAULT_LEAVES;
-    }
-  });
+  const [leaves, setLeaves] = useState<LeaveItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
   const [showApplyModal, setShowApplyModal] = useState(false);
@@ -78,17 +39,13 @@ export const LeaveManagementPage: React.FC = () => {
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Sync to local storage
-  useEffect(() => {
-    localStorage.setItem('doc_leave_records', JSON.stringify(leaves));
-  }, [leaves]);
-
   const loadBackendLeaves = async () => {
+    setLoading(true);
     try {
       const res = await fetch('http://localhost:8081/api/leaves/all');
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           const mapped: LeaveItem[] = data.map((d: any) => ({
             id: d.id,
             userId: d.employee?.userId || '1',
@@ -101,14 +58,20 @@ export const LeaveManagementPage: React.FC = () => {
             adminComment: d.adminComment,
           }));
           setLeaves(mapped);
-          setToast('Loaded leave records from database.');
-          setTimeout(() => setToast(null), 2500);
+          return;
         }
       }
+      setLeaves([]);
     } catch {
-      // Backend not running
+      setLeaves([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadBackendLeaves();
+  }, []);
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,13 +205,33 @@ export const LeaveManagementPage: React.FC = () => {
           border: '1px solid #E2E8F0',
         }}
       >
-        <div>
-          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-            Leave Management System
-          </h1>
-          <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.15rem 0 0 0' }}>
-            Submit leave requests, track remaining allowances, and review staff leave authorizations.
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Link
+            to="/employee"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              padding: '0.45rem 0.8rem',
+              borderRadius: '8px',
+              backgroundColor: '#F8FAFC',
+              border: '1px solid #CBD5E1',
+              color: '#334155',
+              textDecoration: 'none',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+            }}
+          >
+            <ArrowLeft size={14} /> Back
+          </Link>
+          <div>
+            <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              Leave Management System
+            </h1>
+            <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.15rem 0 0 0' }}>
+              Submit leave requests, track remaining allowances, and review staff leave authorizations.
+            </p>
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -349,7 +332,20 @@ export const LeaveManagementPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredLeaves.map((l) => (
+            {loading ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#64748B' }}>
+                  Loading leave records from database...
+                </td>
+              </tr>
+            ) : filteredLeaves.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#64748B' }}>
+                  No leave requests found in database.
+                </td>
+              </tr>
+            ) : (
+              filteredLeaves.map((l) => (
               <tr key={l.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                 <td style={{ padding: '1rem', fontWeight: 700, color: '#0F172A' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -430,7 +426,7 @@ export const LeaveManagementPage: React.FC = () => {
                   )}
                 </td>
               </tr>
-            ))}
+            )))}
           </tbody>
         </table>
       </div>

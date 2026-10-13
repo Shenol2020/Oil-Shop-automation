@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   UserPlus,
   QrCode,
@@ -11,6 +12,7 @@ import {
   Lock,
   Search,
   ShieldCheck,
+  ArrowLeft,
 } from 'lucide-react';
 
 type AccountType = 'employee' | 'manager' | 'main-admin';
@@ -27,39 +29,6 @@ interface RegisteredStaff {
   dateJoined: string;
   qrCodeBase64?: string;
 }
-
-const DEFAULT_STAFF_LIST: RegisteredStaff[] = [
-  {
-    userId: '9f24bf7c-86e5-401f-9da3-7e44a4701290',
-    name: 'Saman Kumara',
-    email: 'saman@disanayakeoil.lk',
-    address: 'No 45, Kandy Road, Colombo',
-    phoneNumber: '0771234567',
-    accountType: 'employee',
-    accessLevel: 'STAFF',
-    dateJoined: '2026-09-01',
-  },
-  {
-    userId: 'c580bfb9-450e-450f-a392-127d498cf112',
-    name: 'Kasun Manager',
-    email: 'kasun@gmail.com',
-    address: 'Colombo 07',
-    phoneNumber: '0779876543',
-    accountType: 'manager',
-    accessLevel: 'MANAGER',
-    dateJoined: '2026-09-15',
-  },
-  {
-    userId: 'a3c0f0d9-1e6a-4d88-bca8-54f1b5d91234',
-    name: 'Admin Chief',
-    email: 'admin@disanayakeoil.lk',
-    address: 'Headquarters, Colombo',
-    phoneNumber: '0714455667',
-    accountType: 'main-admin',
-    accessLevel: 'ADMIN',
-    dateJoined: '2026-08-01',
-  },
-];
 
 export const AccountCreationPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -78,18 +47,42 @@ export const AccountCreationPage: React.FC = () => {
   const [lookupType, setLookupType] = useState<AccountType>('manager');
   const [lookupLoading, setLookupLoading] = useState(false);
 
-  const [staffList, setStaffList] = useState<RegisteredStaff[]>(() => {
+  const [staffList, setStaffList] = useState<RegisteredStaff[]>([]);
+
+  const fetchStaffFromBackend = async () => {
     try {
-      const stored = localStorage.getItem('doc_registered_staff');
-      return stored ? JSON.parse(stored) : DEFAULT_STAFF_LIST;
+      const res = await fetch('http://localhost:8081/api/staff');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const mapped: RegisteredStaff[] = data.map((s: any) => ({
+            userId: s.userId || s.id,
+            name: s.name,
+            email: s.email,
+            address: s.address,
+            phoneNumber: s.phoneNumber,
+            accountType: s.userType?.toLowerCase().includes('admin')
+              ? 'main-admin'
+              : s.userType?.toLowerCase().includes('manager')
+              ? 'manager'
+              : 'employee',
+            accessLevel: s.accessLevel || 'STAFF',
+            dateJoined: s.dateJoined || '2026-10-12',
+            qrCodeBase64: s.qrCodeBase64,
+          }));
+          setStaffList(mapped);
+          return;
+        }
+      }
+      setStaffList([]);
     } catch {
-      return DEFAULT_STAFF_LIST;
+      setStaffList([]);
     }
-  });
+  };
 
   useEffect(() => {
-    localStorage.setItem('doc_registered_staff', JSON.stringify(staffList));
-  }, [staffList]);
+    fetchStaffFromBackend();
+  }, []);
 
   const getEndpointForType = (type: AccountType) => {
     return `http://localhost:8081/api/${type}/register`;
@@ -295,19 +288,39 @@ export const AccountCreationPage: React.FC = () => {
           border: '1px solid #E2E8F0',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#D97706', backgroundColor: '#FEF3C7', padding: '0.15rem 0.55rem', borderRadius: '9999px' }}>
-              MAINADMIN PRIVILEGE
-            </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Multi-Role Account Creation & Badging</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Link
+            to="/employee"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              padding: '0.45rem 0.8rem',
+              borderRadius: '8px',
+              backgroundColor: '#F8FAFC',
+              border: '1px solid #CBD5E1',
+              color: '#334155',
+              textDecoration: 'none',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+            }}
+          >
+            <ArrowLeft size={14} /> Back
+          </Link>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#D97706', backgroundColor: '#FEF3C7', padding: '0.15rem 0.55rem', borderRadius: '9999px' }}>
+                MAINADMIN PRIVILEGE
+              </span>
+              <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Multi-Role Account Creation & Badging</span>
+            </div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              Employee Account Creation & Badging Tool
+            </h1>
+            <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>
+              Register <strong>employee</strong>, <strong>manager</strong>, or <strong>main-admin</strong> accounts with automatic QR badge generation.
+            </p>
           </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-            Employee Account Creation & Badging Tool
-          </h1>
-          <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>
-            Register <strong>employee</strong>, <strong>manager</strong>, or <strong>main-admin</strong> accounts with automatic QR badge generation.
-          </p>
         </div>
       </div>
 

@@ -17,12 +17,18 @@ export const EmployeeDashboard: React.FC = () => {
   const sections = [
     {
       title: 'POS System',
-      description: 'In-store cashier checkout terminal, product inventory, sales logging & receipts.',
+      description: 'In-store cashier checkout terminal, product inventory, sales logging, supplier directory, and purchase restock orders.',
       icon: Calculator,
       link: '/employee/pos',
       color: '#10B981',
       bg: '#ECFDF5',
-      badge: 'Active Terminal',
+      badge: 'Terminal & Supply',
+      quickLinks: [
+        { label: 'Terminal', to: '/employee/pos?tab=terminal' },
+        { label: 'Inventory', to: '/employee/pos?tab=products' },
+        { label: 'Suppliers', to: '/employee/pos?tab=suppliers' },
+        { label: 'Purchase Orders', to: '/employee/pos?tab=purchase-orders' },
+      ],
     },
     {
       title: 'Order Management',
@@ -90,17 +96,6 @@ export const EmployeeDashboard: React.FC = () => {
           <p style={{ margin: 0, color: '#CBD5E1', fontSize: '0.9rem' }}>
             Role: <strong style={{ color: isMainAdmin ? '#FBBF24' : '#38BDF8' }}>{role || 'ShopStaff'}</strong> | Status: Online
           </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.1)', padding: '0.75rem 1.25rem', borderRadius: '10px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>5</div>
-            <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Core Modules</div>
-          </div>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.1)', padding: '0.75rem 1.25rem', borderRadius: '10px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>8081</div>
-            <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Backend Port</div>
-          </div>
         </div>
       </div>
 
@@ -180,20 +175,46 @@ export const EmployeeDashboard: React.FC = () => {
                       Restricted to MainAdmin role
                     </span>
                   ) : (
-                    <Link
-                      to={section.link}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                        color: section.color,
-                        fontWeight: 700,
-                        fontSize: '0.875rem',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      Launch Module <ArrowRight size={15} />
-                    </Link>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <Link
+                        to={section.link}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          color: section.color,
+                          fontWeight: 700,
+                          fontSize: '0.875rem',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        Launch Module <ArrowRight size={15} />
+                      </Link>
+
+                      {section.quickLinks && (
+                        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                          {section.quickLinks.map((ql) => (
+                            <Link
+                              key={ql.label}
+                              to={ql.to}
+                              style={{
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                                padding: '0.2rem 0.5rem',
+                                borderRadius: '6px',
+                                backgroundColor: '#F1F5F9',
+                                color: '#334155',
+                                textDecoration: 'none',
+                                border: '1px solid #E2E8F0',
+                                transition: 'all 0.15s',
+                              }}
+                            >
+                              {ql.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

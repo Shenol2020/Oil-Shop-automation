@@ -87,26 +87,24 @@ export function normalizeSale(s) {
   };
 }
 
-// Memory cache fallback in case backend DB has 0 items initially or network error
-let localProducts = [...MOCK_PRODUCTS];
-let localSales = [...MOCK_SALES];
-let localInvoices = [...MOCK_INVOICES];
-let localPurchaseOrders = [...MOCK_PURCHASE_ORDERS];
-let localSuppliers = [...MOCK_SUPPLIERS];
-let localReports = [...MOCK_REPORTS];
+// Local cache for mutations
+let localProducts = [];
+let localSales = [];
+let localInvoices = [];
+let localPurchaseOrders = [];
+let localSuppliers = [];
+let localReports = [];
 
-
-async function handleRequest(apiFunc, fallbackData, isArray = true) {
+async function handleRequest(apiFunc, fallbackData = [], isArray = true) {
   try {
     const response = await apiFunc();
     if (response && response.data !== undefined && response.data !== null) {
-      // If array response is empty, return array
       return { data: response.data, isMock: false };
     }
-    return { data: fallbackData, isMock: true };
+    return { data: isArray ? [] : null, isMock: false };
   } catch (error) {
     console.warn(`[Spring Boot API Endpoint Call] ${error.config?.url} returned: ${error.message}`);
-    return { data: fallbackData, isMock: true, error: error.message };
+    return { data: isArray ? [] : null, isMock: false, error: error.message };
   }
 }
 
@@ -121,13 +119,13 @@ async function handleRequest(apiFunc, fallbackData, isArray = true) {
 
 export const productsApi = {
   getAll: async () => {
-    const res = await handleRequest(() => apiClient.get('/api/products/all'), localProducts);
-    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    const res = await handleRequest(() => apiClient.get('/api/products/all'), []);
+    if (res.data && Array.isArray(res.data)) {
       const normalizedList = res.data.map(normalizeProduct);
       localProducts = normalizedList;
-      return { data: normalizedList, isMock: res.isMock };
+      return { data: normalizedList, isMock: false };
     }
-    return { data: localProducts, isMock: res.isMock };
+    return { data: [], isMock: false };
   },
 
   getById: async (pID) => {
@@ -222,14 +220,13 @@ export const productsApi = {
 
 export const salesApi = {
   getAll: async () => {
-    const res = await handleRequest(() => apiClient.get('/api/sales/all'), localSales);
-    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    const res = await handleRequest(() => apiClient.get('/api/sales/all'), []);
+    if (res.data && Array.isArray(res.data)) {
       const normalizedList = res.data.map(normalizeSale);
       localSales = normalizedList;
-      return { data: normalizedList, isMock: res.isMock };
+      return { data: normalizedList, isMock: false };
     }
-    const normalizedLocal = localSales.map(normalizeSale);
-    return { data: normalizedLocal, isMock: res.isMock };
+    return { data: [], isMock: false };
   },
 
   getById: async (saleId) => {
@@ -331,18 +328,18 @@ export const invoicesApi = {
 
 export const suppliersApi = {
   getAll: async () => {
-    const res = await handleRequest(() => apiClient.get('/api/suppliers/all'), localSuppliers);
-    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    const res = await handleRequest(() => apiClient.get('/api/suppliers/all'), []);
+    if (res.data && Array.isArray(res.data)) {
       localSuppliers = res.data;
-      return { data: res.data, isMock: res.isMock };
+      return { data: res.data, isMock: false };
     }
-    return { data: localSuppliers, isMock: res.isMock };
+    return { data: [], isMock: false };
   },
 
   getById: async (id) => {
-    const fallback = localSuppliers.find(s => s.supplierId === Number(id)) || localSuppliers[0];
+    const fallback = localSuppliers.find(s => s.supplierId === Number(id));
     const res = await handleRequest(() => apiClient.get(`/api/suppliers/${id}`), fallback, false);
-    return { data: res.data || fallback, isMock: res.isMock };
+    return { data: res.data || fallback, isMock: false };
   },
 
   create: async (formSupplier) => {
@@ -408,20 +405,19 @@ export function normalizePurchaseOrder(po) {
 
 export const purchaseOrdersApi = {
   getAll: async () => {
-    const res = await handleRequest(() => apiClient.get('/api/purchase-orders/all'), localPurchaseOrders);
-    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    const res = await handleRequest(() => apiClient.get('/api/purchase-orders/all'), []);
+    if (res.data && Array.isArray(res.data)) {
       const normalizedList = res.data.map(normalizePurchaseOrder);
       localPurchaseOrders = normalizedList;
-      return { data: normalizedList, isMock: res.isMock };
+      return { data: normalizedList, isMock: false };
     }
-    const normalizedLocal = localPurchaseOrders.map(normalizePurchaseOrder);
-    return { data: normalizedLocal, isMock: res.isMock };
+    return { data: [], isMock: false };
   },
 
   getById: async (orderId) => {
-    const fallback = localPurchaseOrders.find(po => po.orderId === Number(orderId) || po.purchaseOrderId === Number(orderId) || po.id === Number(orderId)) || localPurchaseOrders[0];
+    const fallback = localPurchaseOrders.find(po => po.orderId === Number(orderId) || po.purchaseOrderId === Number(orderId) || po.id === Number(orderId));
     const res = await handleRequest(() => apiClient.get(`/api/purchase-orders/${orderId}`), fallback, false);
-    return { data: normalizePurchaseOrder(res.data) || normalizePurchaseOrder(fallback), isMock: res.isMock };
+    return { data: normalizePurchaseOrder(res.data) || fallback, isMock: false };
   },
 
   create: async (supplierId, items, orderDate = null) => {
@@ -476,12 +472,12 @@ export const purchaseOrdersApi = {
 
 export const reportsApi = {
   getAllReports: async () => {
-    const res = await handleRequest(() => apiClient.get('/api/reports/all'), localReports);
-    if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    const res = await handleRequest(() => apiClient.get('/api/reports/all'), []);
+    if (res.data && Array.isArray(res.data)) {
       localReports = res.data;
-      return { data: res.data, isMock: res.isMock };
+      return { data: res.data, isMock: false };
     }
-    return { data: localReports, isMock: res.isMock };
+    return { data: [], isMock: false };
   },
 
   createDailyReport: async (dateString) => {

@@ -48,9 +48,6 @@ export const AuthLayout: React.FC = () => {
           <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: '0 0 0.25rem 0' }}>
             Disanayake Oil Center
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#64748B', margin: 0 }}>
-            Unified Management & Customer Portal
-          </p>
         </div>
 
         <Outlet />

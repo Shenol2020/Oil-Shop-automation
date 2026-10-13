@@ -522,5 +522,77 @@ button, input, select, textarea, optgroup {
   display: none !important;
 }
 
+/* ======================================================== */
+/* 3D SCROLL & TEXT ANIMATION SUITE (ENGINE OIL LUXURY) */
+/* ======================================================== */
+
+@keyframes textRevealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(32px) scale(0.97);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes textShimmerGold {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulseGoldGlow {
+  0%, 100% {
+    text-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(217, 119, 6, 0.4);
+  }
+}
+
+.anim-text-reveal-1 {
+  animation: textRevealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-text-reveal-2 {
+  animation: textRevealUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-text-reveal-3 {
+  animation: textRevealUp 1.0s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-text-reveal-4 {
+  animation: textRevealUp 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-large-headline {
+  color: #FFFFFF !important;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.15);
+  animation: floatGentle 6s ease-in-out infinite;
+}
+
+.hero-italic-statement {
+  color: #FFFFFF !important;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8), 0 0 35px rgba(245, 158, 11, 0.25);
+  animation: floatGentle 7s ease-in-out infinite 0.5s;
+}
+
 
 

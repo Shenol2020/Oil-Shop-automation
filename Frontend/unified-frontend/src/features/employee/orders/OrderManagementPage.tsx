@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   CheckCircle,
   XCircle,
@@ -11,6 +12,7 @@ import {
   Phone,
   MapPin,
   Check,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface OrderItem {
@@ -32,117 +34,70 @@ interface OrderRecord {
   status: 'Pending' | 'Approved' | 'Cancelled';
 }
 
-const INITIAL_ORDERS: OrderRecord[] = [
-  {
-    id: 1084,
-    customerName: 'Sunil Weerasinghe',
-    email: 'sunil@gmail.com',
-    phone: '077-8899112',
-    address: 'No. 45, Galle Road, Colombo 03',
-    date: '2026-10-12 11:24 AM',
-    items: [
-      { name: 'Mobil 1 Super 3000 5W-30 (4L)', quantity: 1, price: 14500 },
-      { name: 'Brake Fluid DOT4 (500ml)', quantity: 2, price: 1200 },
-    ],
-    total: 16900,
-    paymentMethod: 'Cash on Delivery',
-    status: 'Pending',
-  },
-  {
-    id: 1083,
-    customerName: 'Damith Bandara',
-    email: 'damith.b@gmail.com',
-    phone: '071-4567890',
-    address: '12 Temple Road, Kandy',
-    date: '2026-10-12 09:40 AM',
-    items: [
-      { name: 'Castrol GTX 10W-40 (4L)', quantity: 2, price: 11800 },
-      { name: 'Radiator Coolant 1L', quantity: 1, price: 950 },
-    ],
-    total: 24550,
-    paymentMethod: 'Card Online',
-    status: 'Approved',
-  },
-  {
-    id: 1082,
-    customerName: 'Roshan Fernando',
-    email: 'roshan.f@yahoo.com',
-    phone: '076-2233445',
-    address: '88 Negombo Road, Ja-Ela',
-    date: '2026-10-11 04:15 PM',
-    items: [
-      { name: 'Shell Spirax S2 G 75W-90 (1L)', quantity: 3, price: 3200 },
-    ],
-    total: 9600,
-    paymentMethod: 'Cash on Delivery',
-    status: 'Approved',
-  },
-];
-
 export const OrderManagementPage: React.FC = () => {
-  const [orders, setOrders] = useState<OrderRecord[]>(() => {
-    try {
-      const stored = localStorage.getItem('doc_managed_orders');
-      return stored ? JSON.parse(stored) : INITIAL_ORDERS;
-    } catch {
-      return INITIAL_ORDERS;
-    }
-  });
-
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'ALL' | 'Pending' | 'Approved' | 'Cancelled'>('ALL');
   const [search, setSearch] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  // Sync to local storage
-  useEffect(() => {
-    localStorage.setItem('doc_managed_orders', JSON.stringify(orders));
-  }, [orders]);
-
-  // Attempt backend fetch if available
   const fetchBackendOrders = async () => {
+    setLoading(true);
     try {
       const res = await fetch('http://localhost:8081/api/orders');
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          // normalize
+        if (Array.isArray(data)) {
           const mapped: OrderRecord[] = data.map((o: any) => ({
-            id: o.orderId || o.id,
+            id: o.order_id || o.orderId || o.id,
             customerName: o.customer?.name || 'Online Customer',
-            email: o.customer?.email || 'customer@gmail.com',
+            email: o.customer?.email || 'N/A',
             phone: o.customer?.phoneNumber || 'N/A',
             address: o.customer?.address || 'Store Pickup',
-            date: o.orderDate ? new Date(o.orderDate).toLocaleString() : 'Recent',
+            date: o.oder_date || o.orderDate ? new Date(o.oder_date || o.orderDate).toLocaleString() : 'Recent',
             items: (o.orderItems || []).map((item: any) => ({
-              name: item.product?.p_name || 'Automotive Oil',
+              name: item.product?.p_name || item.product?.name || 'Automotive Oil',
               quantity: item.quantity,
-              price: item.unitPriceAtOrder || 0,
+              price: item.unit_price_at_order || item.unitPriceAtOrder || 0,
             })),
-            total: o.totalAmount || 0,
+            total: o.total_amount || o.totalAmount || 0,
             paymentMethod: o.payment || 'Cash',
-            status: o.orderStatus === 'Approved' ? 'Approved' : 'Pending',
+            status: o.order_status === 'Approved' || o.orderStatus === 'Approved' ? 'Approved' : o.order_status === 'Cancelled' ? 'Cancelled' : 'Pending',
           }));
           setOrders(mapped);
-          setToast('Synchronized orders from database!');
-          setTimeout(() => setToast(null), 2500);
           return;
         }
       }
-    } catch {
-      // Backend not running or no endpoint yet
+      setOrders([]);
+    } catch (err) {
+      console.error('Failed to load orders from server:', err);
+      setOrders([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUpdateStatus = (id: number, newStatus: 'Approved' | 'Cancelled') => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o))
-    );
-    if (selectedOrder && selectedOrder.id === id) {
-      setSelectedOrder((prev) => (prev ? { ...prev, status: newStatus } : null));
+  useEffect(() => {
+    fetchBackendOrders();
+  }, []);
+
+  const handleUpdateStatus = async (id: number, newStatus: 'Approved' | 'Cancelled') => {
+    try {
+      await fetch(`http://localhost:8081/api/orders/${id}/status?status=${newStatus}`, {
+        method: 'PUT',
+      });
+      setOrders((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, status: newStatus } : o))
+      );
+      if (selectedOrder && selectedOrder.id === id) {
+        setSelectedOrder((prev) => (prev ? { ...prev, status: newStatus } : null));
+      }
+      setToast(`Order #${id} marked as ${newStatus}!`);
+      setTimeout(() => setToast(null), 2500);
+    } catch {
+      alert('Failed to update status on server');
     }
-    setToast(`Order #${id} marked as ${newStatus}!`);
-    setTimeout(() => setToast(null), 2500);
   };
 
   const filteredOrders = orders.filter((o) => {
@@ -195,13 +150,33 @@ export const OrderManagementPage: React.FC = () => {
           border: '1px solid #E2E8F0',
         }}
       >
-        <div>
-          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-            Online Customer Order Management
-          </h1>
-          <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.15rem 0 0 0' }}>
-            Review pending orders from the customer mart, verify lubricant items, and approve dispatches.
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Link
+            to="/employee"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              padding: '0.45rem 0.8rem',
+              borderRadius: '8px',
+              backgroundColor: '#F8FAFC',
+              border: '1px solid #CBD5E1',
+              color: '#334155',
+              textDecoration: 'none',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+            }}
+          >
+            <ArrowLeft size={14} /> Back
+          </Link>
+          <div>
+            <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              Online Customer Order Management
+            </h1>
+            <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.15rem 0 0 0' }}>
+              Review pending orders from the customer mart, verify lubricant items, and approve dispatches.
+            </p>
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -282,10 +257,16 @@ export const OrderManagementPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#64748B' }}>
+                  Loading online customer orders from database...
+                </td>
+              </tr>
+            ) : filteredOrders.length === 0 ? (
               <tr>
                 <td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#94A3B8' }}>
-                  No online customer orders found.
+                  No online customer orders found in database.
                 </td>
               </tr>
             ) : (

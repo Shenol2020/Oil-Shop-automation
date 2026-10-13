@@ -92,12 +92,9 @@ export const EmployeeLoginPage: React.FC = () => {
         </Link>
       </div>
 
-      <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.25rem' }}>
-        Employee Portal Sign In
+      <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', marginBottom: '1.5rem' }}>
+        Shop Staff Sign Portal
       </h2>
-      <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.5rem' }}>
-        Restricted to authorized ShopStaff, Manager, and MainAdmin personnel.
-      </p>
 
       {errorMessage && (
         <div

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,5 +77,35 @@ public class AttendanceController {
     public AttendanceRecord getToday(@PathVariable String userId) {
         return attendanceRepository.findByUserIdAndWorkDate(userId, LocalDate.now())
                 .orElseThrow(() -> new RuntimeException("No record today"));
+    }
+
+    @GetMapping("/today")
+    public List<AttendanceRecord> getTodayRecords() {
+        return attendanceRepository.findAll().stream()
+                .filter(r -> LocalDate.now().equals(r.getWorkDate()))
+                .toList();
+    }
+
+    @GetMapping("/settings")
+    public Map<String, Object> getSalarySettings() {
+        return Map.of(
+                "baseSalary", salaryService.getBaseSalary(),
+                "overtimeRatePerHour", salaryService.getOvertimeRatePerHour()
+        );
+    }
+
+    @PutMapping("/settings")
+    public Map<String, Object> updateSalarySettings(@RequestBody Map<String, Object> payload) {
+        if (payload.containsKey("baseSalary")) {
+            salaryService.setBaseSalary(Double.parseDouble(payload.get("baseSalary").toString()));
+        }
+        if (payload.containsKey("overtimeRatePerHour")) {
+            salaryService.setOvertimeRatePerHour(Double.parseDouble(payload.get("overtimeRatePerHour").toString()));
+        }
+        return Map.of(
+                "baseSalary", salaryService.getBaseSalary(),
+                "overtimeRatePerHour", salaryService.getOvertimeRatePerHour(),
+                "message", "Salary settings updated successfully"
+        );
     }
 }
