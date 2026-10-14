@@ -26,13 +26,23 @@ jobs:
 
       - name: Build with Maven
         working-directory: ./Backend 
-        run: mvn clean install
+        run: mvn clean package -DskipTests
+
+      - name: Locate and prepare executable JAR
+        working-directory: ./Backend/target
+        run: |
+          # Find the executable JAR, excluding plain '.jar.original' files
+          JAR_FILE=$(ls *.jar | grep -v '\.original$' | head -n 1)
+          echo "Selected deployment artifact: $JAR_FILE"
+          mkdir -p ../to-deploy
+          cp "$JAR_FILE" ../to-deploy/app.jar
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/Backend/target/*.jar' 
+          path: Backend/to-deploy/app.jar
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -49,5 +59,5 @@ jobs:
         with:
           app-name: 'oilshopweb'
           slot-name: 'Production'
-          package: '*.jar'
+          package: 'app.jar'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FA58345A120144839F2DCEF24A7E0553 }}
