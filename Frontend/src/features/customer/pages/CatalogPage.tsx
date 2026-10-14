@@ -5,6 +5,7 @@ import { productsApi } from '../../../services/posApi';
 import type { Product } from '../../../types';
 import { OilBottle3DExperience } from '../components/OilBottle3DExperience';
 import { getProductImageUrl } from '../../employee/pos/imageStorage';
+import { API_BASE_URL } from '@/services/api';
 
 export const CatalogPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,7 +36,7 @@ export const CatalogPage: React.FC = () => {
     const fetchCatalog = async () => {
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:8081/api/products/all');
+        const res = await fetch(`${API_BASE_URL}/api/products/all`);
         if (res.ok) {
           const data = await res.json();
           if (isMounted && Array.isArray(data) && data.length > 0) {
@@ -905,10 +906,10 @@ export const CatalogPage: React.FC = () => {
                       alt={p.p_name}
                       onError={(e) => {
                         const target = e.currentTarget;
-                        if (!target.dataset.triedBackend && p.pic && !target.src.startsWith('http://localhost:8081')) {
+                        if (!target.dataset.triedBackend && p.pic && (!API_BASE_URL || !target.src.startsWith(API_BASE_URL))) {
                           target.dataset.triedBackend = 'true';
                           const clean = p.pic.startsWith('/') ? p.pic : `/${p.pic}`;
-                          target.src = `http://localhost:8081${clean}`;
+                          target.src = `${API_BASE_URL}${clean}`;
                         } else if (!target.dataset.triedDefault) {
                           target.dataset.triedDefault = 'true';
                           target.src = getProductImage(p.p_name);

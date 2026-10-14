@@ -3,6 +3,7 @@ import { CreditCard, CheckCircle, ArrowLeft, AlertCircle, ShoppingBag } from 'lu
 import { useCartStore } from '../../../store/cartStore';
 import { useAuthStore } from '../../../store/authStore';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '@/services/api';
 
 export const CheckoutPage: React.FC = () => {
   const { items, getTotalPrice, clearCart } = useCartStore();
@@ -37,7 +38,7 @@ export const CheckoutPage: React.FC = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:8081/api/orders/checkout', {
+      const res = await fetch(`${API_BASE_URL}/api/orders/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload),

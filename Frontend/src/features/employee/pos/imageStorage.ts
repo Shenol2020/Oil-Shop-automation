@@ -1,5 +1,6 @@
 // @ts-nocheck
 // Image storage utility for managing product images in the frontend /images folder
+import { API_BASE_URL } from '@/services/api';
 
 const STORAGE_PREFIX = 'doc_pos_img_';
 
@@ -88,7 +89,7 @@ export async function saveUploadedImage(file, productName = 'product') {
 
   // Also post to Vite server upload endpoint to save physical file into public/images/
   try {
-    await fetch('/api/upload-image', {
+    await fetch(`${API_BASE_URL}/api/upload-image`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -132,6 +133,7 @@ export function getProductImageUrl(picPath, fallbackName = '') {
     // Ignore storage errors
   }
 
-  // Return the public relative path (e.g. '/images/img_1741234567_mobil.jpg')
-  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  // Return the public relative path or API_BASE_URL prefixed path
+  const cleanPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  return API_BASE_URL ? `${API_BASE_URL}${cleanPath}` : cleanPath;
 }

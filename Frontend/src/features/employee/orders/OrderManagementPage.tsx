@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '@/services/api';
 import {
   CheckCircle,
   XCircle,
@@ -45,7 +46,7 @@ export const OrderManagementPage: React.FC = () => {
   const fetchBackendOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8081/api/orders');
+      const res = await fetch(`${API_BASE_URL}/api/orders`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -84,7 +85,7 @@ export const OrderManagementPage: React.FC = () => {
 
   const handleUpdateStatus = async (id: number, newStatus: 'Approved' | 'Cancelled') => {
     try {
-      await fetch(`http://localhost:8081/api/orders/${id}/status?status=${newStatus}`, {
+      await fetch(`${API_BASE_URL}/api/orders/${id}/status?status=${newStatus}`, {
         method: 'PUT',
       });
       setOrders((prev) =>

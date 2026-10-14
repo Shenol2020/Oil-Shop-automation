@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
+import { API_BASE_URL } from '@/services/api';
 
 export const CustomerLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export const CustomerLoginPage: React.FC = () => {
 
     try {
       // Direct integration or mock session for scaffolding
-      const res = await fetch('http://localhost:8081/api/customer_accounts/login', {
+      const res = await fetch(`${API_BASE_URL}/api/customer_accounts/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

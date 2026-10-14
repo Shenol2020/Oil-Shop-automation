@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Plus, Phone, Mail, MapPin, Edit, Trash2, RefreshCw, X, Building2, AlertCircle, Search, Truck } from 'lucide-react';
+import { API_BASE_URL } from '@/services/api';
 
 interface Supplier {
   supplierId: number;
@@ -36,7 +37,7 @@ export const SuppliersPageView: React.FC<SuppliersPageViewProps> = ({ showToast,
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:8081/api/suppliers/all');
+      const res = await fetch(`${API_BASE_URL}/api/suppliers/all`);
       if (!res.ok) throw new Error('Failed to fetch suppliers from backend');
       const data = await res.json();
       setSuppliers(Array.isArray(data) ? data : []);
@@ -80,7 +81,7 @@ export const SuppliersPageView: React.FC<SuppliersPageViewProps> = ({ showToast,
   const handleDelete = async (sId: number, name: string) => {
     if (window.confirm(`Are you sure you want to delete supplier "${name}"?`)) {
       try {
-        const res = await fetch(`http://localhost:8081/api/suppliers/remove/${sId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/suppliers/remove/${sId}`, {
           method: 'DELETE',
         });
         if (res.ok) {
@@ -104,7 +105,7 @@ export const SuppliersPageView: React.FC<SuppliersPageViewProps> = ({ showToast,
 
     try {
       if (editSupplier) {
-        const res = await fetch(`http://localhost:8081/api/suppliers/update/${editSupplier.supplierId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/suppliers/update/${editSupplier.supplierId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -115,7 +116,7 @@ export const SuppliersPageView: React.FC<SuppliersPageViewProps> = ({ showToast,
         if (!res.ok) throw new Error('Failed to update supplier');
         showToast('Supplier updated successfully.');
       } else {
-        const res = await fetch('http://localhost:8081/api/suppliers/add', {
+        const res = await fetch(`${API_BASE_URL}/api/suppliers/add`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),

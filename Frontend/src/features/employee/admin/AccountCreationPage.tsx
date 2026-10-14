@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   ArrowLeft,
 } from 'lucide-react';
+import { API_BASE_URL } from '@/services/api';
 
 type AccountType = 'employee' | 'manager' | 'main-admin';
 
@@ -51,7 +52,7 @@ export const AccountCreationPage: React.FC = () => {
 
   const fetchStaffFromBackend = async () => {
     try {
-      const res = await fetch('http://localhost:8081/api/staff');
+      const res = await fetch(`${API_BASE_URL}/api/staff`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -85,11 +86,11 @@ export const AccountCreationPage: React.FC = () => {
   }, []);
 
   const getEndpointForType = (type: AccountType) => {
-    return `http://localhost:8081/api/${type}/register`;
+    return `${API_BASE_URL}/api/${type}/register`;
   };
 
   const getLookupUrl = (type: AccountType, id: string) => {
-    return `http://localhost:8081/api/${type}/${id}`;
+    return `${API_BASE_URL}/api/${type}/${id}`;
   };
 
   const getRoleLabel = (type: AccountType) => {

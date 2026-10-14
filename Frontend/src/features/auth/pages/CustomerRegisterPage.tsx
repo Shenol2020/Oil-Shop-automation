@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
+import { API_BASE_URL } from '@/services/api';
 
 export const CustomerRegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -16,7 +17,7 @@ export const CustomerRegisterPage: React.FC = () => {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:8081/api/customer_accounts/signup', {
+      const res = await fetch(`${API_BASE_URL}/api/customer_accounts/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useAuthStore } from '../../../store/authStore';
+import { API_BASE_URL } from '@/services/api';
 
 interface ScanEventResponse {
   action: 'ARRIVAL' | 'DEPARTURE';
@@ -67,7 +68,7 @@ export const AttendanceSalaryPage: React.FC = () => {
   // Fetch staff list to map UUIDs to actual employee names
   const fetchStaffMap = async () => {
     try {
-      const res = await fetch('http://localhost:8081/api/staff');
+      const res = await fetch(`${API_BASE_URL}/api/staff`);
       if (res.ok) {
         const staffList: StaffMember[] = await res.json();
         const mapping: Record<string, string> = {};
@@ -87,7 +88,7 @@ export const AttendanceSalaryPage: React.FC = () => {
   const fetchTodayScans = async () => {
     setTodayLoading(true);
     try {
-      const res = await fetch('http://localhost:8081/api/attendance/today');
+      const res = await fetch(`${API_BASE_URL}/api/attendance/today`);
       if (res.ok) {
         const data = await res.json();
         setTodayRecords(Array.isArray(data) ? data : []);
@@ -104,7 +105,7 @@ export const AttendanceSalaryPage: React.FC = () => {
   // Fetch dynamic salary settings from backend
   const fetchSalarySettings = async () => {
     try {
-      const res = await fetch('http://localhost:8081/api/attendance/settings');
+      const res = await fetch(`${API_BASE_URL}/api/attendance/settings`);
       if (res.ok) {
         const data = await res.json();
         if (data.baseSalary !== undefined) setBaseSalary(data.baseSalary);
@@ -132,7 +133,7 @@ export const AttendanceSalaryPage: React.FC = () => {
     setIsSavingSettings(true);
     setSettingsStatus(null);
     try {
-      const res = await fetch('http://localhost:8081/api/attendance/settings', {
+      const res = await fetch(`${API_BASE_URL}/api/attendance/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -214,7 +215,7 @@ export const AttendanceSalaryPage: React.FC = () => {
     setCameraError(null);
 
     try {
-      const res = await fetch('http://localhost:8081/api/attendance/scan', {
+      const res = await fetch(`${API_BASE_URL}/api/attendance/scan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: userId.trim() }),

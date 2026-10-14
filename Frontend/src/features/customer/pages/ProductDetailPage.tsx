@@ -4,6 +4,7 @@ import { ArrowLeft, ShoppingCart, Check, ShieldCheck, Truck } from 'lucide-react
 import { useCartStore } from '../../../store/cartStore';
 import type { Product } from '../../../types';
 import { getProductImageUrl } from '../../employee/pos/imageStorage';
+import { API_BASE_URL } from '@/services/api';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +21,7 @@ export const ProductDetailPage: React.FC = () => {
       setLoading(true);
       try {
         // Try getProduct endpoint
-        const res = await fetch(`http://localhost:8081/api/products/getProduct/${id}`);
+        const res = await fetch(`${API_BASE_URL}/api/products/getProduct/${id}`);
         if (res.ok) {
           const data = await res.json();
           if (isMounted && data) {
@@ -130,10 +131,10 @@ export const ProductDetailPage: React.FC = () => {
               alt={product.p_name}
               onError={(e) => {
                 const target = e.currentTarget;
-                if (!target.dataset.triedBackend && product.pic && !target.src.startsWith('http://localhost:8081')) {
+                if (!target.dataset.triedBackend && product.pic && (!API_BASE_URL || !target.src.startsWith(API_BASE_URL))) {
                   target.dataset.triedBackend = 'true';
                   const clean = product.pic.startsWith('/') ? product.pic : `/${product.pic}`;
-                  target.src = `http://localhost:8081${clean}`;
+                  target.src = `${API_BASE_URL}${clean}`;
                 } else if (!target.dataset.triedDefault) {
                   target.dataset.triedDefault = 'true';
                   target.src = '/hero_oil_can.jpg';

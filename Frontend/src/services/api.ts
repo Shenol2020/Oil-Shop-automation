@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://localhost:8081';
+// Main API base URL. Can be set to "" for relative paths (Vite proxy / production reverse proxy),
+// or a specific backend URL such as "http://localhost:8081" or deployed backend domain.
+export const API_BASE_URL = "";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

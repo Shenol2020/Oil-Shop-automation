@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Truck, Plus, RefreshCw, CheckCircle2, Clock, X, PackagePlus, AlertCircle } from 'lucide-react';
+import { API_BASE_URL } from '@/services/api';
 
 interface PurchaseOrderItem {
   productId: number;
@@ -46,9 +47,9 @@ export const PurchaseOrdersPageView: React.FC<PurchaseOrdersPageViewProps> = ({ 
     setError(null);
     try {
       const [poRes, supRes, prodRes] = await Promise.all([
-        fetch('http://localhost:8081/api/purchase-orders/all'),
-        fetch('http://localhost:8081/api/suppliers/all'),
-        fetch('http://localhost:8081/api/products/all'),
+        fetch(`${API_BASE_URL}/api/purchase-orders/all`),
+        fetch(`${API_BASE_URL}/api/suppliers/all`),
+        fetch(`${API_BASE_URL}/api/products/all`),
       ]);
 
       if (poRes.ok) {
@@ -79,7 +80,7 @@ export const PurchaseOrdersPageView: React.FC<PurchaseOrdersPageViewProps> = ({ 
   const handleCompleteOrder = async (orderId: number) => {
     if (!orderId) return;
     try {
-      const res = await fetch(`http://localhost:8081/api/purchase-orders/complete/${orderId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/purchase-orders/complete/${orderId}`, {
         method: 'PUT',
       });
       if (!res.ok) throw new Error('Failed to complete order');
@@ -126,7 +127,7 @@ export const PurchaseOrdersPageView: React.FC<PurchaseOrdersPageViewProps> = ({ 
         })),
       };
 
-      const res = await fetch('http://localhost:8081/api/purchase-orders/create', {
+      const res = await fetch(`${API_BASE_URL}/api/purchase-orders/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

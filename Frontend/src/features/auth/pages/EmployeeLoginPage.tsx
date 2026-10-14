@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertCircle, Loader2, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
+import { API_BASE_URL } from '@/services/api';
 
 export const EmployeeLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ export const EmployeeLoginPage: React.FC = () => {
 
     try {
       // Retrieve the shopStaff data directly from the backend
-      const response = await fetch('http://localhost:8081/api/staff');
+      const response = await fetch(`${API_BASE_URL}/api/staff`);
       if (!response.ok) {
         throw new Error('Unable to fetch shopStaff data');
       }

@@ -10,6 +10,7 @@ import {
   BellRing
 } from 'lucide-react';
 import { useAuthStore } from '../../../store/authStore';
+import { API_BASE_URL } from '@/services/api';
 
 interface LeaveItem {
   id: number;
@@ -130,7 +131,7 @@ export const LeaveManagementPage: React.FC = () => {
 
     const fetchBalances = async () => {
       try {
-        const res = await fetch(`http://localhost:8081/api/leaves/balances/${user?.userId}`);
+        const res = await fetch(`${API_BASE_URL}/api/leaves/balances/${user?.userId}`);
         if (res.ok) {
           const data = await res.json();
           setUtilizedBalances({
@@ -180,7 +181,7 @@ export const LeaveManagementPage: React.FC = () => {
 
   const loadBackendLeaves = async () => {
     try {
-      const res = await fetch('http://localhost:8081/api/leaves/all');
+      const res = await fetch(`${API_BASE_URL}/api/leaves/all`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
@@ -220,7 +221,7 @@ export const LeaveManagementPage: React.FC = () => {
     };
 
     try {
-      await fetch('http://localhost:8081/api/leaves/request', {
+      await fetch(`${API_BASE_URL}/api/leaves/request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -266,7 +267,7 @@ export const LeaveManagementPage: React.FC = () => {
 
     try {
       const endpoint = decision === 'APPROVED' ? 'approve' : 'reject';
-      await fetch(`http://localhost:8081/api/leaves/${endpoint}/${id}?adminComment=${encodeURIComponent(comment)}`, {
+      await fetch(`${API_BASE_URL}/api/leaves/${endpoint}/${id}?adminComment=${encodeURIComponent(comment)}`, {
         method: 'PUT',
       });
     } catch {
