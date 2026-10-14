@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Check, ShieldCheck, Truck } from 'lucide-react';
 import { useCartStore } from '../../../store/cartStore';
 import type { Product } from '../../../types';
+import { getProductImageUrl } from '../../employee/pos/imageStorage';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -119,10 +120,38 @@ export const ProductDetailPage: React.FC = () => {
             justifyContent: 'center',
             color: '#94A3B8',
             position: 'relative',
+            overflow: 'hidden',
+            padding: '1.5rem',
           }}
         >
-          <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>🛢️</div>
-          <div style={{ fontWeight: 700, color: '#475569', fontSize: '1rem' }}>Genuine Oil Seal</div>
+          {product.pic ? (
+            <img
+              src={getProductImageUrl(product.pic, product.p_name)}
+              alt={product.p_name}
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (!target.dataset.triedBackend && product.pic && !target.src.startsWith('http://localhost:8081')) {
+                  target.dataset.triedBackend = 'true';
+                  const clean = product.pic.startsWith('/') ? product.pic : `/${product.pic}`;
+                  target.src = `http://localhost:8081${clean}`;
+                } else if (!target.dataset.triedDefault) {
+                  target.dataset.triedDefault = 'true';
+                  target.src = '/hero_oil_can.jpg';
+                }
+              }}
+              style={{
+                maxHeight: '260px',
+                maxWidth: '85%',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 10px 18px rgba(0,0,0,0.15))',
+              }}
+            />
+          ) : (
+            <>
+              <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>🛢️</div>
+              <div style={{ fontWeight: 700, color: '#475569', fontSize: '1rem' }}>Genuine Oil Seal</div>
+            </>
+          )}
           <span style={{ position: 'absolute', top: '16px', left: '16px', backgroundColor: '#ECFDF5', color: '#059669', fontSize: '0.75rem', fontWeight: 800, padding: '0.25rem 0.65rem', borderRadius: '9999px' }}>
             SKU #{product.pID}
           </span>

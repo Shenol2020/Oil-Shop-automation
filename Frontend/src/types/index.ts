@@ -7,6 +7,9 @@ export interface Product {
   supplierID?: number;
   description?: string;
   image_url?: string;
+  pic?: string;
+  brand?: string;
+  volume?: string;
 }
 
 export interface CustomerUser {

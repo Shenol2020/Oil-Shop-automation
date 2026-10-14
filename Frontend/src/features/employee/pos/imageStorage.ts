@@ -106,22 +106,32 @@ export async function saveUploadedImage(file, productName = 'product') {
 /**
  * Resolves a product image path to a displayable URL
  */
-export function getProductImageUrl(picPath) {
-  if (!picPath) return '';
+export function getProductImageUrl(picPath, fallbackName = '') {
+  if (!picPath || typeof picPath !== 'string' || picPath.trim() === '') {
+    if (fallbackName) {
+      const n = fallbackName.toLowerCase();
+      if (n.includes('gear') || n.includes('trans') || n.includes('75w')) return '/gear_oil.jpg';
+      if (n.includes('4l') || n.includes('can') || n.includes('drum') || n.includes('diesel')) return '/synthetic_4l.jpg';
+      return '/hero_oil_can.jpg';
+    }
+    return '/hero_oil_can.jpg';
+  }
+
+  const trimmed = picPath.trim();
   
   // If it's already a Data URL or external HTTP URL, return directly
-  if (picPath.startsWith('data:') || picPath.startsWith('http://') || picPath.startsWith('https://')) {
-    return picPath;
+  if (trimmed.startsWith('data:') || trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
   }
 
   // Check if we have a locally cached high-res data URL for this path
   try {
-    const cached = localStorage.getItem(`${STORAGE_PREFIX}${picPath}`);
+    const cached = localStorage.getItem(`${STORAGE_PREFIX}${trimmed}`);
     if (cached) return cached;
   } catch (e) {
     // Ignore storage errors
   }
 
   // Return the public relative path (e.g. '/images/img_1741234567_mobil.jpg')
-  return picPath;
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
 }

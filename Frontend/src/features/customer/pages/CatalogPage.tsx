@@ -4,6 +4,7 @@ import { useCartStore } from '../../../store/cartStore';
 import { productsApi } from '../../../services/posApi';
 import type { Product } from '../../../types';
 import { OilBottle3DExperience } from '../components/OilBottle3DExperience';
+import { getProductImageUrl } from '../../employee/pos/imageStorage';
 
 export const CatalogPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -60,6 +61,7 @@ export const CatalogPage: React.FC = () => {
               price: p.price,
               current_stock_quantity: p.stockQuantity ?? p.current_stock_quantity ?? 10,
               description: p.description,
+              pic: p.pic || p.image || '',
             }))
           );
         }
@@ -183,8 +185,11 @@ export const CatalogPage: React.FC = () => {
     return matchesSearch;
   });
 
-  const getProductImage = (name: string) => {
-    const n = name.toLowerCase();
+  const getProductImage = (name: string, pic?: string) => {
+    if (pic && typeof pic === 'string' && pic.trim() !== '') {
+      return getProductImageUrl(pic, name);
+    }
+    const n = (name || '').toLowerCase();
     if (n.includes('gear') || n.includes('trans') || n.includes('75w')) {
       return '/gear_oil.jpg';
     }
@@ -722,7 +727,7 @@ export const CatalogPage: React.FC = () => {
                   margin: '0.2rem 0',
                 }}
               >
-                Direct Lubricant Inventory
+                Start Shopping
               </h2>
               <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem', maxWidth: '640px' }}>
                 Factory-sealed synthetic motor oils, heavy-duty gear fluids, and long-life coolants directly synced with the Disanayake Oil Center warehouse.
@@ -855,7 +860,7 @@ export const CatalogPage: React.FC = () => {
             {filteredProducts.map((p) => {
               const price = typeof p.price === 'string' ? parseFloat(p.price) : p.price;
               const inStock = (p.current_stock_quantity ?? 0) > 0;
-              const prodImg = getProductImage(p.p_name);
+              const prodImg = getProductImage(p.p_name, p.pic);
 
               return (
                 <div
@@ -898,6 +903,17 @@ export const CatalogPage: React.FC = () => {
                     <img
                       src={prodImg}
                       alt={p.p_name}
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.dataset.triedBackend && p.pic && !target.src.startsWith('http://localhost:8081')) {
+                          target.dataset.triedBackend = 'true';
+                          const clean = p.pic.startsWith('/') ? p.pic : `/${p.pic}`;
+                          target.src = `http://localhost:8081${clean}`;
+                        } else if (!target.dataset.triedDefault) {
+                          target.dataset.triedDefault = 'true';
+                          target.src = getProductImage(p.p_name);
+                        }
+                      }}
                       style={{
                         maxHeight: '180px',
                         maxWidth: '85%',
@@ -1462,8 +1478,15 @@ export const CatalogPage: React.FC = () => {
 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <img
-                src={getProductImage(selectedProductDetails.p_name)}
+                src={getProductImage(selectedProductDetails.p_name, selectedProductDetails.pic)}
                 alt={selectedProductDetails.p_name}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.dataset.triedDefault) {
+                    target.dataset.triedDefault = 'true';
+                    target.src = getProductImage(selectedProductDetails.p_name);
+                  }
+                }}
                 style={{ maxHeight: '180px', objectFit: 'contain', margin: '0 auto' }}
               />
             </div>

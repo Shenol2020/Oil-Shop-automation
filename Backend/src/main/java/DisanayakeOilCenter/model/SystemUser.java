@@ -25,7 +25,7 @@ public class SystemUser {
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.password = password;
+        this.password = password; 
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.accessLevel = accessLevel;
